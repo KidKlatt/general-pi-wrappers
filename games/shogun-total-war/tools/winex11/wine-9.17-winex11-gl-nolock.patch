@@ -1,0 +1,86 @@
+--- a/dlls/winex11.drv/x11drv.h
++++ b/dlls/winex11.drv/x11drv.h
+@@ -682,6 +682,8 @@
+ 
+ extern void X11DRV_expect_error( Display *display, x11drv_error_callback callback, void *arg );
+ extern int X11DRV_check_error(void);
++extern void X11DRV_expect_error_nolock( Display *display, x11drv_error_callback callback, void *arg );
++extern int X11DRV_check_error_nolock(void);
+ extern POINT virtual_screen_to_root( INT x, INT y );
+ extern POINT root_to_virtual_screen( INT x, INT y );
+ extern RECT get_host_primary_monitor_rect(void);
+--- a/dlls/winex11.drv/x11drv_main.c
++++ b/dlls/winex11.drv/x11drv_main.c
+@@ -253,6 +253,27 @@
+ }
+ 
+ 
++/* STW project build (Pi_TW_Shogun tools/winex11): as X11DRV_expect_error without XLockDisplay,
++ * for GLX calls that Mesa sends through xcb (see tools/winex11/README.md). */
++void X11DRV_expect_error_nolock( Display *display, x11drv_error_callback callback, void *arg )
++{
++    pthread_mutex_lock( &error_mutex );
++    err_callback         = callback;
++    err_callback_display = display;
++    err_callback_arg     = arg;
++    err_callback_result  = 0;
++    err_serial           = NextRequest(display);
++}
++
++int X11DRV_check_error_nolock(void)
++{
++    int res = err_callback_result;
++    err_callback = NULL;
++    pthread_mutex_unlock( &error_mutex );
++    return res;
++}
++
++
+ /***********************************************************************
+  *		X11DRV_check_error
+  *
+--- a/dlls/winex11.drv/opengl.c
++++ b/dlls/winex11.drv/opengl.c
+@@ -1022,10 +1022,10 @@
+     switch (swap_control_method)
+     {
+     case GLX_SWAP_CONTROL_EXT:
+-        X11DRV_expect_error(gdi_display, GLXErrorHandler, NULL);
++        X11DRV_expect_error_nolock(gdi_display, GLXErrorHandler, NULL);
+         pglXSwapIntervalEXT(gdi_display, drawable, interval);
+         XSync(gdi_display, False);
+-        ret = !X11DRV_check_error();
++        ret = !X11DRV_check_error_nolock();
+         break;
+ 
+     case GLX_SWAP_CONTROL_MESA:
+@@ -1579,10 +1579,10 @@
+ {
+     TRACE("%p -> %p mask %#x\n", src, dst, mask);
+ 
+-    X11DRV_expect_error( gdi_display, GLXErrorHandler, NULL );
++    X11DRV_expect_error_nolock( gdi_display, GLXErrorHandler, NULL );
+     pglXCopyContext( gdi_display, src->ctx, dst->ctx, mask );
+     XSync( gdi_display, False );
+-    if (X11DRV_check_error())
++    if (X11DRV_check_error_nolock())
+     {
+         static unsigned int once;
+ 
+@@ -1959,10 +1959,14 @@
+             }
+         }
+ 
+-        X11DRV_expect_error(gdi_display, GLXErrorHandler, NULL);
++        X11DRV_expect_error_nolock(gdi_display, GLXErrorHandler, NULL);
++        {
++            static int once;
++            if (!once++) ERR( "STW winex11 build: GL error checks without XLockDisplay\n" );
++        }
+         ret->ctx = create_glxcontext(gdi_display, ret, hShareContext ? hShareContext->ctx : NULL);
+         XSync(gdi_display, False);
+-        if ((err = X11DRV_check_error()) || !ret->ctx)
++        if ((err = X11DRV_check_error_nolock()) || !ret->ctx)
+         {
+             /* In the future we should convert the GLX error to a win32 one here if needed */
+             WARN("Context creation failed (error %#x).\n", err);

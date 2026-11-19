@@ -1,0 +1,59 @@
+{
+  "catalog_version": 1,
+  "games": [
+    {
+      "slug": "medieval-total-war",
+      "short_id": "mtw",
+      "title": "Medieval: Total War",
+      "path": "games/medieval-total-war",
+      "wrapper_version": "1.0.0",
+      "status": "released",
+      "products": [
+        {
+          "product_id": "1397939414",
+          "title": "Medieval: Total War",
+          "gog_build_id": "59131712679784536",
+          "gog_installer_build": "86311"
+        }
+      ]
+    },
+    {
+      "slug": "shogun-total-war",
+      "short_id": "stw",
+      "title": "Shogun: Total War - Warlord Edition",
+      "path": "games/shogun-total-war",
+      "wrapper_version": "0.9.0",
+      "status": "playable",
+      "products": [
+        {
+          "product_id": "1874325037",
+          "title": "SHOGUN: Total War",
+          "gog_build_id": "59191766611906857",
+          "gog_installer_build": "86790"
+        }
+      ]
+    },
+    {
+      "slug": "sudden-strike-2",
+      "short_id": "ss2",
+      "title": "Sudden Strike 2 and Sudden Strike: Resource War",
+      "path": "games/sudden-strike-2",
+      "wrapper_version": "0.9.0",
+      "status": "playable",
+      "products": [
+        {
+          "product_id": "1443986935",
+          "title": "Sudden Strike 2",
+          "gog_build_id": "50364933495991234",
+          "gog_installer_build": "13718"
+        },
+        {
+          "product_id": "1707288232",
+          "title": "Sudden Strike: Resource War",
+          "gog_build_id": "50348383013086683",
+          "gog_installer_build": "13581"
+        }
+      ]
+    }
+  ]
+}

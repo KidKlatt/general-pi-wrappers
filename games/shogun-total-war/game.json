@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "slug": "shogun-total-war",
+  "short_id": "stw",
+  "title": "Shogun: Total War - Warlord Edition",
+  "wrapper": {
+    "version": "0.9.0",
+    "status": "playable",
+    "phase": "4 - Refinement (Gate 4 open; no play.sh or setup script yet)",
+    "updated": "2026-11-18",
+    "public_repo": null,
+    "changelog": "CHANGELOG.md"
+  },
+  "gog_products": [
+    {
+      "product_id": "1874325037",
+      "title": "SHOGUN: Total War",
+      "gog_build_id": "59191766611906857",
+      "gog_version": "v1",
+      "installer": {
+        "kind": "offline",
+        "gog_installer_build": "86790",
+        "format": "Inno Setup 5.6.2 (innoextract 1.9 --gog --language=en-US)",
+        "files": [
+          {
+            "name": "setup_shogun_total_wartm_gog_v1_(86790).exe",
+            "bytes": 1564964984,
+            "sha256": "bed36e39c45bc447f21a25c7de5f3f09a09587ac176129cd3621fe9c5f216b28"
+          }
+        ]
+      },
+      "main_exe": "ShogunM.exe",
+      "launch_exe": "shogun.exe",
+      "notes": "One program serves the base game and the Mongol Invasion expansion."
+    }
+  ],
+  "targets": [
+    {
+      "device": "pi4-4gb",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "result": "Fights 36.5 avg / 20.5 min FPS; campaign map about 35; menus 55-60",
+      "profile": "config/profile-best.env",
+      "device_file": "config/pi4-stw-lazy.env"
+    }
+  ],
+  "stack": {
+    "emulation": "Box64 0.4.5 (a46caf3), currently run in place from ~/mtw/box64",
+    "wine": "Wine 9.17 x86-64 WoW64, private copy ~/stw/wine-x64-9.17 with a rebuilt winex11.so",
+    "graphics": "WineD3D -> OpenGL on V3D, d3d9lazy shim (GOG's own ddraw.dll proxy left in place)",
+    "mesa": "Uses MTW's patched Mesa (~/mtw/mesa-patched, read-only)",
+    "own_components": [
+      {
+        "name": "d3d9lazy",
+        "kind": "d3d9.dll shim",
+        "source": "tools/d3d9lazy/d3d9lazy.c",
+        "version": "MTW v10 + per-frame draw gate"
+      },
+      {
+        "name": "dsound-linear",
+        "kind": "patched Wine 9.17 dsound.dll (built on the Pi)",
+        "source": "tools/dsound/wine-9.17-dsound-linear.patch"
+      },
+      {
+        "name": "winex11-gl-nolock",
+        "kind": "patched Wine 9.17 winex11.so (built on the Pi)",
+        "source": "tools/winex11/wine-9.17-winex11-gl-nolock.patch"
+      }
+    ]
+  },
+  "depends_on": [
+    {
+      "game": "medieval-total-war",
+      "path": "~/mtw/mesa-patched",
+      "why": "patched Mesa, used read-only"
+    },
+    {
+      "game": "medieval-total-war",
+      "path": "~/mtw/box64",
+      "why": "Box64 0.4.5 run in place until an own copy exists (STATE next action 2)"
+    }
+  ],
+  "provides": [],
+  "entry_points": {
+    "setup": null,
+    "play": null,
+    "desktop": []
+  }
+}

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Medieval Total War
+Comment=Start the game (Hangover + d3d9lazy shim)
+Exec=/home/admin/mtw/scripts/pi/play.sh
+Icon=applications-games
+Terminal=false
+Categories=Game;

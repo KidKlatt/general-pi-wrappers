@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Sudden Strike Resource War
+Comment=Start the game (Hangover Wine)
+Exec=/home/admin/ss2/scripts/pi/play.sh rw
+Icon=applications-games
+Terminal=false
+Categories=Game;

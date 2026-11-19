@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KidKlatt/general-pi-wrappers/schema/game.schema.json",
+  "title": "Pi game wrapper record (games/<slug>/game.json)",
+  "description": "One file per game folder. Says which GOG products and installer builds the wrapper was made and tested against, and which version of the wrapper this is. Read by tools/build-catalog.py and, later, by the entry tool that matches a user's GOG library.",
+  "type": "object",
+  "required": ["schema_version", "slug", "short_id", "title", "wrapper", "gog_products"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Must equal the folder name under games/." },
+    "short_id": { "type": "string", "pattern": "^[a-z0-9]{2,8}$", "description": "Pi folder ~/<short_id>, env prefix, tmux session, ssh alias <short_id>-pi." },
+    "title": { "type": "string" },
+    "wrapper": {
+      "type": "object",
+      "required": ["version", "status", "updated"],
+      "properties": {
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "description": "Semver of the wrapper itself. Bump on every merge to main that changes behaviour." },
+        "status": { "enum": ["planned", "in-progress", "playable", "released", "retired"] },
+        "phase": { "type": "string" },
+        "updated": { "type": "string", "format": "date" },
+        "public_repo": { "type": ["string", "null"] },
+        "changelog": { "type": "string" }
+      }
+    },
+    "gog_products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["product_id", "title", "installer"],
+        "properties": {
+          "product_id": { "type": "string", "pattern": "^[0-9]+$", "description": "GOG gameId from goggame-<id>.info; also the id in the GOG API." },
+          "title": { "type": "string" },
+          "gog_build_id": { "type": ["string", "null"], "description": "buildId from goggame-<id>.info." },
+          "gog_version": { "type": ["string", "null"], "description": "Version string GOG shows for the offline installer." },
+          "installer": {
+            "type": "object",
+            "required": ["kind", "files"],
+            "properties": {
+              "kind": { "enum": ["offline", "galaxy"] },
+              "gog_installer_build": { "type": ["string", "null"], "description": "The number in parentheses in GOG's installer file name." },
+              "format": { "type": "string" },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "bytes", "sha256"],
+                  "properties": {
+                    "name": { "type": "string" },
+                    "bytes": { "type": "integer" },
+                    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+                  }
+                }
+              },
+              "notes": { "type": "string" }
+            }
+          },
+          "main_exe": { "type": "string" },
+          "launch_exe": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "targets": { "type": "array" },
+    "stack": { "type": "object" },
+    "depends_on": { "type": "array", "description": "Things on the Pi this wrapper uses that another game's setup installs." },
+    "provides": { "type": "array" },
+    "entry_points": {
+      "type": "object",
+      "properties": {
+        "setup": { "type": ["string", "null"] },
+        "play": { "type": ["string", "null"] },
+        "desktop": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+# Never commit game files, installers, Pi login details or bulky run captures.
+**/Pi_Env.txt
+**/Game Files/
+**/installer/
+*.bin
+setup_*.exe
+games/*/runs/*
+!games/*/runs/.gitkeep
+# Local-only frozen copies of other projects (the other games' folders replace them).
+games/*/reference/
+__pycache__/

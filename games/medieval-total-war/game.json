@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "slug": "medieval-total-war",
+  "short_id": "mtw",
+  "title": "Medieval: Total War",
+  "wrapper": {
+    "version": "1.0.0",
+    "status": "released",
+    "phase": "4 - Refinement (Gate 4 open; public setup script shipped)",
+    "updated": "2026-11-16",
+    "public_repo": "https://github.com/KidKlatt/TWM_Pi",
+    "changelog": "CHANGELOG.md"
+  },
+  "gog_products": [
+    {
+      "product_id": "1397939414",
+      "title": "Medieval: Total War",
+      "gog_build_id": "59131712679784536",
+      "gog_version": "v1",
+      "installer": {
+        "kind": "offline",
+        "gog_installer_build": "86311",
+        "format": "Inno Setup (innoextract 1.9 --gog)",
+        "files": [
+          {
+            "name": "setup_medieval_total_war_gog_v1_(86311).exe",
+            "bytes": 2601304,
+            "sha256": "002c6e3c18367a703429e9cd535736c5e4794f0fe58a41510682942897a7fa5c"
+          },
+          {
+            "name": "setup_medieval_total_war_gog_v1_(86311)-1.bin",
+            "bytes": 1609605265,
+            "sha256": "cf0feed7f7bff4002957ccd38e02748e06286ad86c6ba0c31e381889cebcb1c7"
+          }
+        ],
+        "notes": "The GOG Galaxy online installer is not supported; use the two-file offline backup installer."
+      },
+      "main_exe": "Medieval_TW.exe"
+    }
+  ],
+  "targets": [
+    {
+      "device": "pi4-4gb",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "result": "Battles 17-25 FPS at 800x600 full screen",
+      "profile": "config/profile-42-hangover-d3d9lazy-vram512.env",
+      "device_file": "config/pi4-lazy.env"
+    }
+  ],
+  "stack": {
+    "emulation": "Hangover 11.16 (system install) with the WowBox64 back-end",
+    "wine": "Hangover 11.16 (or a private copy under ~/mtw/hangover with --private-wine)",
+    "graphics": "WineD3D -> OpenGL on V3D, WINE_D3D_CONFIG=VideoMemorySize=512",
+    "mesa": "Private Mesa 26.2.6 build with patches/mesa-v3d-busy-range.patch in ~/mtw/mesa-patched",
+    "own_components": [
+      { "name": "d3d9lazy", "kind": "d3d9.dll shim", "source": "tools/d3d9lazy/d3d9lazy.c", "version": "v10" },
+      { "name": "mesa-v3d-busy-range", "kind": "mesa patch", "source": "patches/mesa-v3d-busy-range.patch" }
+    ]
+  },
+  "depends_on": [],
+  "provides": [
+    { "path": "~/mtw/mesa-patched", "used_by": ["shogun-total-war"] },
+    { "path": "~/mtw/box64, ~/mtw/wine-x64-9.17", "used_by": ["shogun-total-war"] }
+  ],
+  "entry_points": {
+    "setup": "scripts/pi/setup-new-pi.sh",
+    "play": "scripts/pi/play.sh",
+    "desktop": ["config/desktop/Medieval-Total-War.desktop", "config/desktop/Medieval-Total-War-FPS.desktop"]
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "slug": "sudden-strike-2",
+  "short_id": "ss2",
+  "title": "Sudden Strike 2 and Sudden Strike: Resource War",
+  "wrapper": {
+    "version": "0.9.0",
+    "status": "playable",
+    "phase": "4/5 boundary (human play test passed; Gate 3 menu approval pending)",
+    "updated": "2026-11-17",
+    "public_repo": null,
+    "changelog": "CHANGELOG.md"
+  },
+  "gog_products": [
+    {
+      "product_id": "1443986935",
+      "title": "Sudden Strike 2",
+      "gog_build_id": "50364933495991234",
+      "gog_version": "2.2",
+      "installer": {
+        "kind": "offline",
+        "gog_installer_build": "13718",
+        "format": "Inno Setup 5.5.7 unicode (innoextract 1.9 --gog)",
+        "files": [
+          {
+            "name": "setup_sudden_strike_2_2.2_(13718).exe",
+            "bytes": 623071288,
+            "sha256": "b78b6c41678352babb5eb15a855c3ea3e78dcb10309cfc973a8bbe653f5f8109"
+          }
+        ]
+      },
+      "main_exe": "game_exe.exe",
+      "notes": "Apply GOG's __support/winmm_override files over the game folder (see docs/game-files-pi4.md)."
+    },
+    {
+      "product_id": "1707288232",
+      "title": "Sudden Strike: Resource War",
+      "gog_build_id": "50348383013086683",
+      "gog_version": "2.4",
+      "installer": {
+        "kind": "offline",
+        "gog_installer_build": "13581",
+        "format": "Inno Setup 5.5.7 unicode (innoextract 1.9 --gog)",
+        "files": [
+          {
+            "name": "setup_sudden_strike_resource_war_2.4_(13581).exe",
+            "bytes": 476182376,
+            "sha256": "13eb17aabde8031175fe10d88623b40fada3500b3abb663ed1132f095d785fff"
+          }
+        ]
+      },
+      "main_exe": "game_exe.exe"
+    }
+  ],
+  "targets": [
+    {
+      "device": "pi4-4gb",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "result": "SS2 about 60 FPS (true 1280x720 with the widescreen patch); Resource War 55 avg / 44 min (stretched 800x600)",
+      "profile": "config/profile-play.env",
+      "device_file": "config/pi4-ss2.env, config/pi4-rw.env"
+    }
+  ],
+  "stack": {
+    "emulation": "Hangover 11.16 (system install) with the FEX back-end (HODLL=libwow64fex.dll); WowBox64 hangs on saving",
+    "wine": "Hangover 11.16 (shared with MTW)",
+    "graphics": "cnc-ddraw 7.1.0.0 (downloaded from its GitHub release by scripts/pi/install-cnc-ddraw.sh)",
+    "mesa": "System Mesa",
+    "own_components": [
+      {
+        "name": "cnc-ddraw config",
+        "kind": "ddraw.ini",
+        "source": "config/cnc-ddraw/ddraw.ini"
+      },
+      {
+        "name": "widescreen",
+        "kind": "community patcher run in a sandbox (not redistributed)",
+        "source": "scripts/pi/apply-widescreen.sh, scripts/pi/sandbox.sh"
+      }
+    ]
+  },
+  "depends_on": [
+    {
+      "game": "medieval-total-war",
+      "path": "system Hangover 11.16 (hangover-wine) + hangover-libwow64fex",
+      "why": "MTW's setup-new-pi.sh installs hangover-wine but not hangover-libwow64fex; on the original Pi FEX was installed during MTW's experiments. No SS2 script installs either yet."
+    }
+  ],
+  "provides": [],
+  "entry_points": {
+    "setup": null,
+    "play": "scripts/pi/play.sh",
+    "desktop": [
+      "config/desktop/Sudden-Strike-2.desktop",
+      "config/desktop/Sudden-Strike-Resource-War.desktop"
+    ]
+  }
+}
