@@ -3,6 +3,24 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.0.0 — 2026-11-19
+
+Tested against GOG product `1874325037`, offline installer build `86790` (gog_build_id `59191766611906857`).
+
+- **Standalone; redo the setup.** Nothing from Medieval: Total War's setup is used any more.
+  `scripts/pi/setup-new-pi.sh` builds Box64 0.4.5 from source (commit `a46caf3`), downloads
+  Kron4ek's Wine 9.17, builds `dsound.dll` and `winex11.so` from the Wine 9.17 source and Mesa
+  26.2.6 with `patches/mesa-v3d-busy-range.patch`, all into `~/stw` with pinned SHA-256.
+- **Full screen** by default: `winex11.so` sets Xwayland emulated modes
+  (`tools/winex11/apply-xwayland-modeset.py`); menus (800x600) are stretched, a 16:9 battle
+  resolution fills the screen. `config/profile-final-pi4.env`.
+- `scripts/pi/play.sh` launcher (`--fps`, `--window`) and two desktop shortcuts.
+- Gate 4: three full test runs in a row (menu, custom battle with unit control, 15 minutes of
+  battle, new campaign, End Turn, save, quit, load): 35.6–36.6 average / 24.5–27.6 minimum FPS
+  while fighting, 0 s below 15, at most 56 °C, no throttling.
+- Not yet: sound check on better speakers (Gate 5). The new setup ran once end to end on the
+  development Pi; it has not been run on a second, clean Pi.
+
 ## 0.9.0 — 2026-11-18
 
 Tested against GOG product `1874325037`, offline installer build `86790` (gog_build_id `59191766611906857`).

@@ -4,10 +4,10 @@
   "short_id": "stw",
   "title": "Shogun: Total War - Warlord Edition",
   "wrapper": {
-    "version": "0.9.0",
+    "version": "1.0.0",
     "status": "playable",
-    "phase": "4 - Refinement (Gate 4 open; no play.sh or setup script yet)",
-    "updated": "2026-11-18",
+    "phase": "5 - Lock in and hand over (Gates 0-4 met; Gate 5 waits on the sound check)",
+    "updated": "2026-11-19",
     "public_repo": null,
     "changelog": "CHANGELOG.md"
   },
@@ -38,16 +38,16 @@
     {
       "device": "pi4-4gb",
       "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
-      "result": "Fights 36.5 avg / 20.5 min FPS; campaign map about 35; menus 55-60",
-      "profile": "config/profile-best.env",
+      "result": "Full screen. Gate 4 (3 runs): fighting 35.6-36.6 avg / 24.5-27.6 min FPS, 0 s below 15, max 56 C; campaign map about 35; menus 55-60",
+      "profile": "config/profile-final-pi4.env",
       "device_file": "config/pi4-stw-lazy.env"
     }
   ],
   "stack": {
-    "emulation": "Box64 0.4.5 (a46caf3), currently run in place from ~/mtw/box64",
-    "wine": "Wine 9.17 x86-64 WoW64, private copy ~/stw/wine-x64-9.17 with a rebuilt winex11.so",
-    "graphics": "WineD3D -> OpenGL on V3D, d3d9lazy shim (GOG's own ddraw.dll proxy left in place)",
-    "mesa": "Uses MTW's patched Mesa (~/mtw/mesa-patched, read-only)",
+    "emulation": "Box64 0.4.5 (commit a46caf3, -DRPI4ARM64=1), built from source into ~/stw/box64 by the setup",
+    "wine": "Kron4ek Wine 9.17 amd64-wow64 in ~/stw/wine-x64-9.17, with this project's winex11.so (built from the Wine 9.17 source)",
+    "graphics": "WineD3D -> OpenGL on V3D, d3d9lazy shim (GOG's own ddraw.dll proxy left in place); full screen through Xwayland emulated modes",
+    "mesa": "Mesa 26.2.6 + patches/mesa-v3d-busy-range.patch, built into ~/stw/mesa-patched by the setup",
     "own_components": [
       {
         "name": "d3d9lazy",
@@ -61,28 +61,26 @@
         "source": "tools/dsound/wine-9.17-dsound-linear.patch"
       },
       {
-        "name": "winex11-gl-nolock",
-        "kind": "patched Wine 9.17 winex11.so (built on the Pi)",
-        "source": "tools/winex11/wine-9.17-winex11-gl-nolock.patch"
+        "name": "winex11-stw",
+        "kind": "patched Wine 9.17 winex11.so (built on the Pi): GL no-lock + Xwayland mode emulation",
+        "source": "tools/winex11/apply-gl-nolock.py + tools/winex11/apply-xwayland-modeset.py"
+      },
+      {
+        "name": "mesa-v3d-busy-range",
+        "kind": "Mesa patch (built on the Pi)",
+        "source": "patches/mesa-v3d-busy-range.patch",
+        "version": "same as Medieval: Total War's"
       }
     ]
   },
-  "depends_on": [
-    {
-      "game": "medieval-total-war",
-      "path": "~/mtw/mesa-patched",
-      "why": "patched Mesa, used read-only"
-    },
-    {
-      "game": "medieval-total-war",
-      "path": "~/mtw/box64",
-      "why": "Box64 0.4.5 run in place until an own copy exists (STATE next action 2)"
-    }
-  ],
+  "depends_on": [],
   "provides": [],
   "entry_points": {
-    "setup": null,
-    "play": null,
-    "desktop": []
+    "setup": "scripts/pi/setup-new-pi.sh",
+    "play": "scripts/pi/play.sh",
+    "desktop": [
+      "config/desktop/Shogun-Total-War.desktop",
+      "config/desktop/Shogun-Total-War-FPS.desktop"
+    ]
   }
 }

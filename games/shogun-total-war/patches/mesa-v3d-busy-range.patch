@@ -1,0 +1,257 @@
+diff -ru v3d.orig/v3d_bufmgr.c mesa-26.2.6/src/gallium/drivers/v3d/v3d_bufmgr.c
+--- v3d.orig/v3d_bufmgr.c	2026-10-28 11:17:44.000000000 -0400
++++ mesa-26.2.6/src/gallium/drivers/v3d/v3d_bufmgr.c	2026-11-14 19:45:04.648773510 -0500
+@@ -110,6 +110,7 @@
+                 v3d_bo_remove_from_cache(cache, bo);
+ 
+                 bo->name = name;
++                v3d_bo_busy_reset(bo);
+         }
+         mtx_unlock(&cache->lock);
+         return bo;
+diff -ru v3d.orig/v3d_bufmgr.h mesa-26.2.6/src/gallium/drivers/v3d/v3d_bufmgr.h
+--- v3d.orig/v3d_bufmgr.h	2026-10-28 11:17:44.000000000 -0400
++++ mesa-26.2.6/src/gallium/drivers/v3d/v3d_bufmgr.h	2026-11-14 19:45:04.647905613 -0500
+@@ -54,8 +54,57 @@
+          * it's safe to reuse it in the BO cache).
+          */
+         bool private;
++
++        /**
++         * Byte range that GPU jobs may read or write since the BO was last
++         * known idle. busy_end == 0 means empty. CPU writes outside this
++         * range cannot race with the GPU.
++         */
++        uint32_t busy_start;
++        uint32_t busy_end;
++        /**
++         * Set right before a relocation whose precise range was already
++         * added with v3d_bo_busy_add(), so that the following
++         * v3d_job_add_bo() does not mark the whole BO busy.
++         */
++        bool busy_hint;
+ };
+ 
++static inline void
++v3d_bo_busy_reset(struct v3d_bo *bo)
++{
++        bo->busy_start = 0;
++        bo->busy_end = 0;
++        bo->busy_hint = false;
++}
++
++static inline void
++v3d_bo_busy_add(struct v3d_bo *bo, uint64_t start, uint64_t end)
++{
++        if (end > bo->size)
++                end = bo->size;
++        if (start >= end)
++                return;
++        if (bo->busy_end == 0) {
++                bo->busy_start = start;
++                bo->busy_end = end;
++        } else {
++                if (start < bo->busy_start)
++                        bo->busy_start = start;
++                if (end > bo->busy_end)
++                        bo->busy_end = end;
++        }
++}
++
++static inline bool
++v3d_bo_busy_intersects(const struct v3d_bo *bo, uint64_t start, uint64_t end)
++{
++        if (bo->busy_end == 0)
++                return false;
++        return (start > bo->busy_start ? start : bo->busy_start) <
++               (end < bo->busy_end ? end : bo->busy_end);
++}
++
+ struct v3d_bo *v3d_bo_alloc(struct v3d_screen *screen, uint32_t size,
+                             const char *name);
+ void v3d_bo_last_unreference(struct v3d_bo *bo);
+diff -ru v3d.orig/v3d_job.c mesa-26.2.6/src/gallium/drivers/v3d/v3d_job.c
+--- v3d.orig/v3d_job.c	2026-10-28 11:17:44.000000000 -0400
++++ mesa-26.2.6/src/gallium/drivers/v3d/v3d_job.c	2026-11-14 19:45:04.649650739 -0500
+@@ -120,6 +120,11 @@
+         if (!bo)
+                 return;
+ 
++        if (bo->busy_hint)
++                bo->busy_hint = false;
++        else
++                v3d_bo_busy_add(bo, 0, bo->size);
++
+         if (_mesa_set_search(job->bos, bo))
+                 return;
+ 
+diff -ru v3d.orig/v3d_resource.c mesa-26.2.6/src/gallium/drivers/v3d/v3d_resource.c
+--- v3d.orig/v3d_resource.c	2026-10-28 11:17:44.000000000 -0400
++++ mesa-26.2.6/src/gallium/drivers/v3d/v3d_resource.c	2026-11-14 19:45:04.659869664 -0500
+@@ -288,6 +288,24 @@
+                 usage |= PIPE_MAP_DISCARD_WHOLE_RESOURCE;
+         }
+ 
++        bool busy_reset = false;
++        if (prsc->target == PIPE_BUFFER && (usage & PIPE_MAP_WRITE) &&
++            !(usage & (PIPE_MAP_READ |
++                       PIPE_MAP_UNSYNCHRONIZED |
++                       PIPE_MAP_DISCARD_WHOLE_RESOURCE)) &&
++            !(prsc->flags & PIPE_RESOURCE_FLAG_MAP_PERSISTENT)) {
++                /* A write-only map of a range that no job reads cannot
++                 * conflict with the GPU, so skip the flush and the wait.
++                 * This is what makes append-style glBufferSubData streams
++                 * cheap on a tile-based renderer.
++                 */
++                if (!v3d_bo_busy_intersects(rsc->bo, box->x,
++                                            (uint64_t)box->x + box->width))
++                        usage |= PIPE_MAP_UNSYNCHRONIZED;
++                else
++                        busy_reset = true;
++        }
++
+         v3d_map_usage_prep(pctx, prsc, usage);
+ 
+         trans = slab_zalloc(&v3d->transfer_pool);
+@@ -311,6 +329,9 @@
+                 buf = v3d_bo_map_unsynchronized(rsc->bo);
+         else
+                 buf = v3d_bo_map(rsc->bo);
++        /* All jobs using the BO were flushed and it has gone idle. */
++        if (busy_reset && buf)
++                v3d_bo_busy_reset(rsc->bo);
+         if (!buf) {
+                 mesa_loge("Failed to map bo");
+                 goto fail;
+diff -ru v3d.orig/v3dx_draw.c mesa-26.2.6/src/gallium/drivers/v3d/v3dx_draw.c
+--- v3d.orig/v3dx_draw.c	2026-10-28 11:17:44.000000000 -0400
++++ mesa-26.2.6/src/gallium/drivers/v3d/v3dx_draw.c	2026-11-14 19:45:04.656533336 -0500
+@@ -809,6 +809,8 @@
+                         continue;
+ 
+                 enum { size = cl_packet_length(GL_SHADER_STATE_ATTRIBUTE_RECORD) };
++                /* v3d_track_draw_buffer_ranges() added this draw's range. */
++                rsc->bo->busy_hint = true;
+                 cl_emit_with_prepacked(&job->indirect,
+                                        GL_SHADER_STATE_ATTRIBUTE_RECORD,
+                                        &vtx->attrs[i * size], attr) {
+@@ -1059,6 +1061,96 @@
+                                        &job->double_buffer_score);
+ }
+ 
++/* Record the byte ranges of the vertex buffers that this draw can read, so
++ * that CPU writes elsewhere in those buffers need not flush the job. Falls
++ * back to marking a whole buffer when the range is not cheaply known.
++ */
++static void
++v3d_track_draw_buffer_ranges(struct v3d_context *v3d,
++                             const struct pipe_draw_info *info,
++                             const struct pipe_draw_indirect_info *indirect,
++                             const struct pipe_draw_start_count_bias *draw)
++{
++        bool have_range = false;
++        int64_t min_v = 0, max_v = 0;
++
++        if (!(indirect && indirect->buffer)) {
++                if (!info->index_size) {
++                        min_v = draw->start;
++                        max_v = (int64_t)draw->start + draw->count - 1;
++                        have_range = true;
++                } else if (info->index_bounds_valid) {
++                        min_v = (int64_t)info->min_index + draw->index_bias;
++                        max_v = (int64_t)info->max_index + draw->index_bias;
++                        have_range = true;
++                } else if (!info->has_user_indices && info->index.resource &&
++                           draw->count <= 4096) {
++                        struct v3d_resource *irsc =
++                                v3d_resource(info->index.resource);
++                        const uint8_t *map =
++                                v3d_bo_map_unsynchronized(irsc->bo);
++                        uint64_t first = (uint64_t)draw->start * info->index_size;
++                        uint64_t last = first +
++                                (uint64_t)draw->count * info->index_size;
++                        if (map && last <= irsc->bo->size) {
++                                uint32_t lo = ~0u, hi = 0;
++                                bool any = false;
++                                for (unsigned i = 0; i < draw->count; i++) {
++                                        const uint8_t *p = map + first +
++                                                (uint64_t)i * info->index_size;
++                                        uint32_t idx;
++                                        if (info->index_size == 1)
++                                                idx = *p;
++                                        else if (info->index_size == 2)
++                                                idx = *(const uint16_t *)p;
++                                        else
++                                                idx = *(const uint32_t *)p;
++                                        if (info->primitive_restart &&
++                                            idx == info->restart_index)
++                                                continue;
++                                        if (idx < lo)
++                                                lo = idx;
++                                        if (idx > hi)
++                                                hi = idx;
++                                        any = true;
++                                }
++                                if (any) {
++                                        min_v = (int64_t)lo + draw->index_bias;
++                                        max_v = (int64_t)hi + draw->index_bias;
++                                        have_range = true;
++                                }
++                        }
++                }
++        }
++        if (min_v < 0 || max_v < min_v)
++                have_range = false;
++
++        struct v3d_vertex_stateobj *vtx = v3d->vtx;
++        for (int i = 0; vtx && i < vtx->num_elements; i++) {
++                struct pipe_vertex_element *elem = &vtx->pipe[i];
++                struct pipe_vertex_buffer *vb =
++                        &v3d->vertexbuf.vb[elem->vertex_buffer_index];
++                struct v3d_resource *rsc = v3d_resource(vb->buffer.resource);
++
++                if (!rsc)
++                        continue;
++
++                if (!have_range || elem->instance_divisor ||
++                    elem->src_stride == 0) {
++                        v3d_bo_busy_add(rsc->bo, 0, rsc->bo->size);
++                        continue;
++                }
++
++                uint64_t base = (uint64_t)vb->buffer_offset + elem->src_offset;
++                uint32_t elem_size =
++                        util_format_get_blocksize(elem->src_format);
++                v3d_bo_busy_add(rsc->bo,
++                                base + (uint64_t)min_v * elem->src_stride,
++                                base + (uint64_t)max_v * elem->src_stride +
++                                elem_size);
++        }
++}
++
+ static void
+ v3d_update_job_tlb_load_store(struct v3d_job *job) {
+         struct v3d_context *v3d = job->v3d;
+@@ -1285,6 +1377,8 @@
+         if (!v3d->prog.gs && !v3d->prim_restart)
+                 v3d_update_primitives_generated_counter(v3d, info, &draws[0]);
+ 
++        v3d_track_draw_buffer_ranges(v3d, info, indirect, &draws[0]);
++
+         uint32_t hw_prim_type = v3d_hw_prim_type(info->mode);
+         if (info->index_size) {
+                 uint32_t index_size = info->index_size;
+@@ -1302,6 +1396,13 @@
+                 }
+                 struct v3d_resource *rsc = v3d_resource(prsc);
+ 
++                if (!info->has_user_indices &&
++                    !(indirect && indirect->buffer)) {
++                        v3d_bo_busy_add(rsc->bo, offset,
++                                        (uint64_t)offset +
++                                        (uint64_t)draws[0].count * index_size);
++                        rsc->bo->busy_hint = true;
++                }
+                 cl_emit(&job->bcl, INDEX_BUFFER_SETUP, ib) {
+                         ib.address = cl_address(rsc->bo, 0);
+                         ib.size = rsc->bo->size;
