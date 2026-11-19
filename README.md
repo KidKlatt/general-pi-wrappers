@@ -1,9 +1,8 @@
 # general-pi-wrappers
 
 Wrappers that make **GOG games you own** run on a Raspberry Pi through x86 emulation and Wine:
-setup scripts, configuration, patched open-source DLLs and Mesa patches, and the full working
-record of how each one was made. **No game files are in this repository.** Every wrapper starts
-from the user's own GOG offline installer and leaves the game's executable unmodified.
+setup scripts, configuration, and sources and patches for open-source DLLs and Mesa.
+**No game files are in this repository.** Every wrapper starts from the user's own GOG offline installer and leaves the game's executable unmodified.
 
 The method used to make these (rules, phases, test ladder, templates) lives in the companion
 repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop).
