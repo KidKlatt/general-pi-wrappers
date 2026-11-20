@@ -13,7 +13,7 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 |---|---|---|---|---|
 | [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.0.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
 | [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.0.0 | playable, Phase 5 (standalone, full screen) |
-| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 + Sudden Strike: Resource War | `1443986935`, `1707288232` | 0.9.0 | playable, Phase 4/5 |
+| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.0.0 | playable, Phase 4/5 (widescreen 1280x720) |
 | [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.9.0 | playable (setup.sh, widescreen) |
 
 The machine-readable version of this table is [catalog.json](catalog.json), generated from each

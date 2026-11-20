@@ -2,7 +2,7 @@
 Type=Application
 Name=Sudden Strike 2
 Comment=Start the game (Hangover Wine)
-Exec=/home/admin/ss2/scripts/pi/play.sh ss2
+Exec=/home/admin/ss2/scripts/pi/play.sh
 Icon=applications-games
 Terminal=false
 Categories=Game;
