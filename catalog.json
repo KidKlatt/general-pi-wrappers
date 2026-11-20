@@ -64,6 +64,22 @@
           "gog_installer_build": "13718"
         }
       ]
+    },
+    {
+      "slug": "sudden-strike-resource-war",
+      "short_id": "ssrw",
+      "title": "Sudden Strike: Resource War",
+      "path": "games/sudden-strike-resource-war",
+      "wrapper_version": "1.0.0",
+      "status": "playable",
+      "products": [
+        {
+          "product_id": "1707288232",
+          "title": "Sudden Strike: Resource War",
+          "gog_build_id": "50348383013086683",
+          "gog_installer_build": "13581"
+        }
+      ]
     }
   ]
 }

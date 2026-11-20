@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "slug": "sudden-strike-resource-war",
+  "short_id": "ssrw",
+  "title": "Sudden Strike: Resource War",
+  "wrapper": {
+    "version": "1.0.0",
+    "status": "playable",
+    "phase": "4/5 boundary (split from sudden-strike-2; human play test passed there; Gate 3 menu approval pending)",
+    "updated": "2026-11-20",
+    "public_repo": null,
+    "changelog": "CHANGELOG.md"
+  },
+  "gog_products": [
+    {
+      "product_id": "1707288232",
+      "title": "Sudden Strike: Resource War",
+      "gog_build_id": "50348383013086683",
+      "gog_version": "2.4",
+      "installer": {
+        "kind": "offline",
+        "gog_installer_build": "13581",
+        "format": "Inno Setup 5.5.7 unicode (innoextract 1.9 --gog)",
+        "files": [
+          {
+            "name": "setup_sudden_strike_resource_war_2.4_(13581).exe",
+            "bytes": 476182376,
+            "sha256": "13eb17aabde8031175fe10d88623b40fada3500b3abb663ed1132f095d785fff"
+          }
+        ]
+      },
+      "main_exe": "game_exe.exe"
+    }
+  ],
+  "targets": [
+    {
+      "device": "pi4-4gb",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "result": "57.5 avg / 50.6 min FPS in the first single mission (800x600 stretched to 1280x720); save and load work",
+      "profile": "config/profile-play.env",
+      "device_file": "config/pi4-ssrw.env"
+    }
+  ],
+  "stack": {
+    "emulation": "Hangover 11.16 (system install) with the FEX back-end (HODLL=libwow64fex.dll); WowBox64 hangs on saving in this engine",
+    "wine": "Hangover 11.16 (shared with the other projects)",
+    "graphics": "cnc-ddraw 7.1.0.0 (downloaded from its GitHub release and hash-checked by scripts/pi/install-cnc-ddraw.sh)",
+    "mesa": "System Mesa",
+    "own_components": [
+      {
+        "name": "cnc-ddraw config",
+        "kind": "ddraw.ini",
+        "source": "config/cnc-ddraw/ddraw.ini"
+      }
+    ]
+  },
+  "depends_on": [
+    {
+      "game": "medieval-total-war",
+      "path": "system Hangover 11.16 (hangover-wine) + hangover-libwow64fex",
+      "why": "MTW's setup-new-pi.sh installs hangover-wine but not hangover-libwow64fex; on the original Pi FEX was installed during MTW's experiments. No script of this project installs either yet."
+    }
+  ],
+  "provides": [],
+  "entry_points": {
+    "setup": null,
+    "play": "scripts/pi/play.sh",
+    "desktop": [
+      "config/desktop/Sudden-Strike-Resource-War.desktop"
+    ]
+  }
+}
