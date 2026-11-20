@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# play.sh ss2|rw [--fps] [--fit|--window]: start Sudden Strike 2 or Resource War (Hangover).
-# Used by the desktop shortcuts. Needs no sudo.
+# play.sh [--fps] [--fit|--window]: start Sudden Strike 2 (Hangover).
+# Used by the desktop shortcut. Needs no sudo. Resource War is its own project since 2026-11-20
+# (~/ssrw, projects/sudden-strike-resource-war). A leading "ss2" (old shortcuts) is ignored.
 #   (default)  full screen, picture stretched to fill the whole display, whatever its size and
 #              shape (no side bars on 16:9). Uses cnc-ddraw (scripts/pi/install-cnc-ddraw.sh,
 #              settings config/cnc-ddraw/ddraw.ini) as a borderless window; no mode change.
@@ -14,12 +15,19 @@
 set -u
 SS2_HOME="${SS2_HOME:-$HOME/ss2}"
 cd "$SS2_HOME" || exit 2
-GAME="${1:-}"; [ $# -gt 0 ] && shift
-case "$GAME" in ss2|rw) ;; *) echo "usage: play.sh ss2|rw [--fps] [--fit|--window]"; exit 2 ;; esac
+GAME=ss2
+case "${1:-}" in
+  ss2) shift ;;
+  rw) echo "Resource War moved to its own folder: ~/ssrw/scripts/pi/play.sh"; exit 2 ;;
+esac
 FPS=0; MODE=stretch
 for a in "$@"; do
-  case "$a" in --fps) FPS=1 ;; --fit) MODE=fit ;; --window) MODE=window ;; esac
+  case "$a" in
+    --fps) FPS=1 ;; --fit) MODE=fit ;; --window) MODE=window ;;
+    *) echo "usage: play.sh [--fps] [--fit|--window]"; exit 2 ;;
+  esac
 done
+scripts/pi/busy-check.sh || exit 3
 
 set -a
 . "config/pi4-$GAME.env"
@@ -34,7 +42,7 @@ export WINEPREFIX WINEDEBUG="${WINEDEBUG:-fixme-all}"
 mkdir -p logs
 LOG="$SS2_HOME/logs/play-$GAME-$(date +%Y%m%d-%H%M%S).log"
 running() { ps -eo comm | grep -q '^game_exe'; }
-if running; then echo "A Sudden Strike game is already running." | tee -a "$LOG"; exit 1; fi
+if running; then echo "A Sudden Strike game is already running (this project or Resource War)." | tee -a "$LOG"; exit 1; fi
 
 if [ "$MODE" = stretch ] && ! grep -q cnc-ddraw "$GAME_DIR/ddraw.ini" 2>/dev/null; then
   echo "cnc-ddraw not installed in $GAME_DIR, using --fit" | tee -a "$LOG"; MODE=fit
