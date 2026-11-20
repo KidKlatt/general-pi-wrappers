@@ -2,6 +2,22 @@
   "catalog_version": 1,
   "games": [
     {
+      "slug": "civilization-3",
+      "short_id": "civ3",
+      "title": "Sid Meier's Civilization III Complete",
+      "path": "games/civilization-3",
+      "wrapper_version": "0.9.0",
+      "status": "playable",
+      "products": [
+        {
+          "product_id": "1471405734",
+          "title": "Sid Meier's Civilization III Complete",
+          "gog_build_id": null,
+          "gog_installer_build": null
+        }
+      ]
+    },
+    {
       "slug": "medieval-total-war",
       "short_id": "mtw",
       "title": "Medieval: Total War",

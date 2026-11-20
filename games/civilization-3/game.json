@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "slug": "civilization-3",
+  "short_id": "civ3",
+  "title": "Sid Meier's Civilization III Complete",
+  "wrapper": {
+    "version": "0.9.0",
+    "status": "playable",
+    "phase": "4 done; setup.sh tested from a clean folder",
+    "updated": "2026-11-20",
+    "public_repo": null,
+    "changelog": "CHANGELOG.md"
+  },
+  "gog_products": [
+    {
+      "product_id": "1471405734",
+      "title": "Sid Meier's Civilization III Complete",
+      "gog_build_id": null,
+      "gog_version": "2.0.0.7",
+      "installer": {
+        "kind": "offline",
+        "gog_installer_build": null,
+        "format": "inno-setup-5.5.0-unicode",
+        "files": [
+          {
+            "name": "setup_civilization3_complete_2.0.0.7.exe",
+            "bytes": 1370659544,
+            "sha256": "4ad54ca308ea93af49b0db3a795736eda91aed61c8cd73b18196802d0f4d2395"
+          }
+        ]
+      },
+      "main_exe": "Conquests/Civ3Conquests.exe"
+    }
+  ],
+  "targets": [
+    {
+      "device": "pi4",
+      "resolution": "1440x810 (widescreen, output switched while playing)",
+      "fps": "late game scroll 13-15, early 18-20 (2.0 GHz overclock: 14.4-14.7 late)",
+      "tested": "menus, quick start, custom game, turns, save/load, late-game save, launcher"
+    }
+  ],
+  "stack": {
+    "track": "hangover",
+    "wine": "Hangover 11.16 (system)",
+    "emulator": "WowBox64 0.4.4 (HODLL=wowbox64.dll), BOX64_DYNAREC_CALLRET=1",
+    "display": "Wine Wayland driver (DISPLAY unset); output switched to 1440x810 (or the nearest offered mode >= 1024x768) while playing; KeepRes=1: widescreen",
+    "status": "playable; save/load pass on this stack (exp. 79); performance work closed by the human (exp. 96-97)",
+    "tools": [
+      "innoextract (apt)",
+      "wlr-randr (apt)"
+    ]
+  },
+  "depends_on": [
+    {
+      "project": "system",
+      "path": "/usr (hangover-wine 11.16, hangover-wowbox64)",
+      "what": "Hangover 11.16 packages, installed by setup.sh from the official release if missing"
+    }
+  ],
+  "provides": [],
+  "entry_points": {
+    "setup": "scripts/pi/setup.sh",
+    "play": "scripts/pi/play.sh",
+    "desktop": [
+      "config/desktop/Civilization-III.desktop"
+    ]
+  }
+}
