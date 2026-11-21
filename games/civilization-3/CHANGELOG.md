@@ -3,6 +3,16 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 0.12.0 — 2026-11-21
+
+No change to the tested setup. `setup.sh --check` passes against the existing
+game home on the development Pi.
+
+- `sudo` runs through `sudo_`: with `SUDO_ASKPASS` set (general-pi-manager's password box) it
+  uses `sudo -A`; in a terminal nothing changes.
+- A game folder or Wine prefix already in the game home (set up before step markers existed) is
+  kept instead of unpacked again, so saves stay; no installer is needed then.
+
 ## 0.11.0 — 2026-11-21
 
 No change to the tested setup.

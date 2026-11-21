@@ -11,11 +11,11 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 
 | Folder | Game | GOG product id(s) | Wrapper | Status |
 |---|---|---|---|---|
-| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.2.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
-| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.2.0 | playable, Phase 5 (standalone, full screen) |
-| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.2.0 | playable, Phase 4/5 (widescreen 1280x720) |
-| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.2.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
-| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.11.0 | playable (setup.sh, widescreen) |
+| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.3.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
+| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.3.0 | playable, Phase 5 (standalone, full screen) |
+| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.3.0 | playable, Phase 4/5 (widescreen 1280x720) |
+| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.3.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
+| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.12.0 | playable (setup.sh, widescreen) |
 
 The machine-readable version of this table is [catalog.json](catalog.json), generated from each
 game's `game.json` by `python tools/build-catalog.py` (run `--check` before merging).
@@ -79,6 +79,14 @@ Medieval's `--private-wine`).
   `Icon=`; setup replaces it and installs them into `~/.local/share/applications` and, if it
   exists, `~/Desktop`.
 - Nothing outside the game home changes except apt packages and the shortcuts.
+- **apt:** only packages that are missing are installed (simulated first); an installed package
+  is never upgraded or removed unless the user adds `--allow-upgrades`.
+- **sudo:** every sudo call goes through `sudo_`, which runs `sudo -A` when `SUDO_ASKPASS` is set
+  (a tool such as general-pi-manager then shows its own password box; the password goes from
+  that helper straight to sudo) and plain `sudo` otherwise (a terminal asks as usual).
+- **Existing installs are kept:** a game folder, Wine prefix or built component already in the
+  game home (for example from a setup by hand, before step markers existed) is kept, never
+  unpacked or built again, so a second run or an update keeps saves and settings.
 
 **`scripts/pi/play.sh`** starts the game; no options means full screen. It finds the game home
 from its own location (or `<ID>_HOME`), so a game set up with `--home` starts from its shortcut.

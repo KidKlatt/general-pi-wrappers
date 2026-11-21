@@ -83,6 +83,9 @@ STEPS=9; STEP=0
 step()  { STEP=$((STEP+1)); printf '\n==> [%d/%d] %s\n' "$STEP" "$STEPS" "$*"; }
 die()   { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
 needs() { printf '\nNEEDS YOU: %s\n' "$*" >&2; exit 3; }
+# sudo with a graphical password box when a tool provides one (SUDO_ASKPASS, README "Setup interface").
+sudo_() { if [ -n "${SUDO_ASKPASS:-}" ]; then sudo -A "$@"; else sudo "$@"; fi; }
+missing_pkgs() { local p; for p in "$@"; do dpkg -s "$p" >/dev/null 2>&1 || echo "$p"; done; }
 done_() { [ -f "$MARK/$1.done" ]; }
 mark()  { touch "$MARK/$1.done"; }
 existing_dir() { local d="$1"; while [ ! -d "$d" ]; do d="$(dirname "$d")"; done; echo "$d"; }
@@ -99,7 +102,7 @@ apt_sim() {
   fi
   echo "new packages: $(printf '%s\n' "$sim" | grep -c '^Inst ' || true)"
 }
-apt_install() { apt_sim "$@"; sudo apt-get install -y --no-install-recommends "$@"; }
+apt_install() { apt_sim "$@"; sudo_ apt-get install -y --no-install-recommends "$@"; }
 
 # Finds the installer files; hash_installer records whether they are the tested build.
 find_installer() {
@@ -160,7 +163,7 @@ to /boot/firmware/config.txt and reboot, then run this script again."
 fi
 FREE_GB=$(( $(df -Pk "$(existing_dir "$MTW")" | awk 'NR==2{print $4}') / 1024 / 1024 ))
 [ "$FREE_GB" -ge 10 ] || done_ mesa || needs "needs about 10 GB free for $MTW; only ${FREE_GB} GB free."
-[ "$CHECK" = 1 ] || sudo true || needs "needs sudo for apt."
+[ "$CHECK" = 1 ] || sudo_ true || needs "needs sudo for apt."
 grep -q "Raspberry Pi 4" /proc/device-tree/model 2>/dev/null ||
   echo "NOTE: this is not a Pi 4 ($(tr -d '\0' </proc/device-tree/model 2>/dev/null)). The setup was only ever tested on a Pi 4."
 echo "OK: $(tr -d '\0' </proc/device-tree/model 2>/dev/null), ${PRETTY_NAME}, ${FREE_GB} GB free, into $MTW"
@@ -185,14 +188,32 @@ if [ -n "$path_wine" ] && [ "$path_wine" != /usr/bin/wine ]; then
 fi
 [ "$PRIVATE_WINE" = 1 ] && echo "Hangover will be unpacked privately into $MTW/hangover (--private-wine)."
 
-if ! done_ game; then
+HAVE_GAME=0; [ -f "$MTW/game-lazy/Medieval_TW.exe" ] && HAVE_GAME=1
+if ! done_ game && [ "$HAVE_GAME" = 0 ]; then
   [ -n "$INSTALLER_DIR" ] || needs "give the folder with the GOG installer: --installer DIR"
   find_installer
 fi
 if [ "$CHECK" = 1 ]; then
-  done_ apt || apt_sim "${APT_PKGS[@]}"
-  done_ game || hash_installer
+  if ! done_ apt; then
+    need=($(missing_pkgs "${APT_PKGS[@]}"))
+    if [ ${#need[@]} -gt 0 ]; then echo "apt will install: ${need[*]}"; apt_sim "${need[@]}"; fi
+  fi
+  done_ game || [ "$HAVE_GAME" = 1 ] || hash_installer
   printf '\nREADY: this Pi can run the setup.\n'; exit 0
+fi
+
+# Set up earlier without markers (by hand or by an older setup): keep what is already there
+# instead of unpacking or building it again. Saves and settings in game-lazy stay.
+if ! done_ game && [ "$HAVE_GAME" = 1 ]; then echo "game folder already present: kept (saves and settings stay)."; mark game; fi
+if ! done_ hangover && { [ -x "$MTW/hangover/usr/bin/wine" ] ||
+     { dpkg -s hangover-wine && dpkg -s hangover-wowbox64 && dpkg -s hangover-libarm64ecfex; } >/dev/null 2>&1; }; then
+  echo "Hangover already installed: kept."; mark hangover
+fi
+if ! done_ mesa && [ -f "$MTW/mesa-patched/share/glvnd/egl_vendor.d/50_mesa.json" ]; then
+  echo "patched Mesa already built: kept ($MTW/mesa-patched)."; mark mesa
+fi
+if ! done_ prefix && [ -f "$MTW/prefixes/hangover/system.reg" ]; then
+  echo "Wine prefix already present: kept."; mark prefix
 fi
 
 # ---------------------------------------------------------------------------------------------
@@ -211,8 +232,13 @@ echo "OK"
 # ---------------------------------------------------------------------------------------------
 step "Installing helper and build packages (apt, simulated first)"
 if ! done_ apt; then
-  sudo apt-get update
-  apt_install "${APT_PKGS[@]}"
+  need=($(missing_pkgs "${APT_PKGS[@]}"))
+  if [ ${#need[@]} -eq 0 ]; then
+    echo "all helper and build packages are installed."
+  else
+    sudo_ apt-get update
+    apt_install "${need[@]}"
+  fi
   mark apt
 else echo "already done"; fi
 

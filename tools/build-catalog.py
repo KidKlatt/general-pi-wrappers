@@ -95,6 +95,8 @@ def interface_problems(ep: dict, folder: Path) -> list[str]:
         for opt in STANDARD_SETUP_OPTIONS:
             if f"{opt})" not in text:
                 out.append(f"setup.sh does not accept {opt}")
+        if "SUDO_ASKPASS" not in text or re.search(r"(?m)^(?!\s*#).*(?<![\w-])sudo (apt|true)", text):
+            out.append("setup.sh must run sudo through sudo_ (sudo -A when SUDO_ASKPASS is set)")
     for d in ep.get("desktop", []):
         p = folder / d
         if p.is_file() and "/home/" in p.read_text(encoding="utf-8"):
