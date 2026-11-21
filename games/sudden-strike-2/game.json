@@ -48,7 +48,7 @@
         "missions",
         "save/load"
       ],
-      "rating": null,
+      "rating": "smooth",
       "result": "About 60 FPS in a mission (true 1280x720 with the widescreen patch)",
       "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-play.env",

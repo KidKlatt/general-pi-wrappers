@@ -50,7 +50,7 @@
         "custom and historical battles",
         "save/load"
       ],
-      "rating": null,
+      "rating": "playable",
       "result": "Full screen. Gate 4 (3 runs): fighting 35.6-36.6 avg / 24.5-27.6 min FPS, 0 s below 15, max 56 C; campaign map about 35; menus 55-60",
       "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-final-pi4.env",

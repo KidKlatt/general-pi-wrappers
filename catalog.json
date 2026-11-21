@@ -27,7 +27,7 @@
           "config": "default setup",
           "fps_typical": 18,
           "fps_low": 13,
-          "rating": null
+          "rating": "playable"
         }
       ],
       "products": [
@@ -72,7 +72,7 @@
           "config": "default setup",
           "fps_typical": 17,
           "fps_low": null,
-          "rating": null
+          "rating": "playable"
         }
       ],
       "products": [
@@ -122,7 +122,7 @@
           "config": "default setup",
           "fps_typical": 35.6,
           "fps_low": 24.5,
-          "rating": null
+          "rating": "playable"
         }
       ],
       "products": [
@@ -167,7 +167,7 @@
           "config": "with the optional widescreen patch (not applied by the setup)",
           "fps_typical": 59.7,
           "fps_low": 51.7,
-          "rating": null
+          "rating": "smooth"
         }
       ],
       "products": [
@@ -212,7 +212,7 @@
           "config": "default setup",
           "fps_typical": 57.5,
           "fps_low": 50.6,
-          "rating": null
+          "rating": "smooth"
         }
       ],
       "products": [

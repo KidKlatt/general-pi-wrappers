@@ -50,7 +50,7 @@
         "scene": "battles: 17-25"
       },
       "tested": [],
-      "rating": null,
+      "rating": "playable",
       "result": "Battles 17-25 FPS at 800x600 full screen",
       "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-42-hangover-d3d9lazy-vram512.env",

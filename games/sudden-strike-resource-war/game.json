@@ -47,7 +47,7 @@
         "first single mission",
         "save/load"
       ],
-      "rating": null,
+      "rating": "smooth",
       "result": "57.5 avg / 50.6 min FPS in the first single mission (800x600 stretched to 1280x720); save and load work",
       "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-play.env",
