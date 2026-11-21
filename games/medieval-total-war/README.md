@@ -32,6 +32,10 @@ bash ~/pi-total-war/scripts/pi/setup-new-pi.sh --installer ~/gog
 About 45 minutes later, start the game from the **Medieval Total War** desktop shortcut. The full
 guide, including Pi 5 notes and troubleshooting, is [docs/NEW-PI-SETUP.md](docs/NEW-PI-SETUP.md).
 
+Set up from this folder (`scripts/pi/setup.sh`), the game home also gets
+`scripts/pi/uninstall.sh`: it removes `~/mtw` (game, saves, Wine prefix) and the shortcuts after
+asking (`--check` only lists); apt packages stay.
+
 ## License
 
 This project's own scripts, configuration, docs and shim source are under the [MIT license](../../LICENSE).

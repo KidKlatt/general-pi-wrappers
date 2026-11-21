@@ -46,6 +46,7 @@ Without it the game runs at 800x600 stretched to the screen.
 |---|---|
 | `scripts/pi/setup.sh` | Whole setup (see above) |
 | `scripts/pi/play.sh [--fps] [--fit\|--window]` | Starts the game; used by the desktop shortcut |
+| `scripts/pi/uninstall.sh` | Removes the game home (game, saves, Wine prefix) and its shortcuts; asks first (`--check` only lists, `--yes` skips the question); apt packages stay |
 | `scripts/pi/install-cnc-ddraw.sh` | Downloads cnc-ddraw 7.1.0.0 from its GitHub release (SHA-256 checked) and installs it into the game folder with `config/cnc-ddraw/ddraw.ini` |
 | `scripts/pi/apply-widescreen.sh install\|remove` | Switches the game to the patched 1280x720 files |
 | `scripts/pi/sandbox.sh` | Runs the closed-source community resolution patcher in a sandbox (the patcher is not included) |

@@ -4,10 +4,10 @@
   "short_id": "mtw",
   "title": "Medieval: Total War",
   "wrapper": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "status": "released",
     "phase": "4 - Refinement (Gate 4 open; public setup script shipped)",
-    "updated": "2026-11-20",
+    "updated": "2026-11-21",
     "public_repo": "https://github.com/KidKlatt/TWM_Pi",
     "changelog": "CHANGELOG.md"
   },
@@ -40,13 +40,39 @@
   ],
   "targets": [
     {
-      "device": "pi4-4gb",
-      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "device": "pi4",
+      "ram_gb": 4,
+      "resolution": "800x600 full screen",
+      "config": "default setup",
+      "fps": {
+        "typical": 17,
+        "low": null,
+        "scene": "battles: 17-25"
+      },
+      "tested": [],
+      "rating": "playable",
       "result": "Battles 17-25 FPS at 800x600 full screen",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-42-hangover-d3d9lazy-vram512.env",
       "device_file": "config/pi4-lazy.env"
     }
   ],
+  "notes": {
+    "summary": "Full screen at 800x600 through Hangover (WowBox64), a Direct3D 9 helper DLL and a patched Mesa.",
+    "known_issues": [
+      "Full screen shows a white block in the left border in 4:3 menus (a Wine scaling leftover).",
+      "If the Pi runs heavy background jobs, the game dips for a moment whenever they start."
+    ],
+    "tips": [
+      "Pick the battle resolution under Options > Video; 800x600 was the tested one."
+    ]
+  },
+  "requirements": {
+    "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+    "disk_gb": 10,
+    "tested_on": "Raspberry Pi 4, 4 GB",
+    "setup_time": "about 45 minutes on a Pi 4 (the Mesa build alone about 20)"
+  },
   "stack": {
     "emulation": "Hangover 11.16 (system install) with the WowBox64 back-end",
     "wine": "Hangover 11.16 (or a private copy under ~/mtw/hangover with --private-wine)",
@@ -104,6 +130,7 @@
         "option": "--window",
         "help": "1024x768 Wine desktop window"
       }
-    ]
+    ],
+    "uninstall": "scripts/pi/uninstall.sh"
   }
 }

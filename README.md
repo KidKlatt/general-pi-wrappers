@@ -11,11 +11,11 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 
 | Folder | Game | GOG product id(s) | Wrapper | Status |
 |---|---|---|---|---|
-| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.1.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
-| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.1.0 | playable, Phase 5 (standalone, full screen) |
-| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.1.0 | playable, Phase 4/5 (widescreen 1280x720) |
-| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.1.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
-| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.10.0 | playable (setup.sh, widescreen) |
+| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.2.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
+| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.2.0 | playable, Phase 5 (standalone, full screen) |
+| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.2.0 | playable, Phase 4/5 (widescreen 1280x720) |
+| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.2.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
+| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.11.0 | playable (setup.sh, widescreen) |
 
 The machine-readable version of this table is [catalog.json](catalog.json), generated from each
 game's `game.json` by `python tools/build-catalog.py` (run `--check` before merging).
@@ -23,7 +23,7 @@ game's `game.json` by `python tools/build-catalog.py` (run `--check` before merg
 ## Layout
 
 ```
-catalog.json                 index: GOG product id -> wrapper folder (generated)
+catalog.json                 what general-pi-manager reads (generated; see "Catalog")
 schema/game.schema.json      what a game.json holds
 tools/build-catalog.py       builds / checks catalog.json
 LICENSE                      MIT, for this repository's own files
@@ -90,6 +90,41 @@ from its own location (or `<ID>_HOME`), so a game set up with `--home` starts fr
 
 Other options are listed in `entry_points.play_options`. Exit codes: 0 played; 1 this game is
 already running (it never refuses because a different game runs); 2 not set up, or usage error.
+
+**`scripts/pi/uninstall.sh`** removes the game: its game home (the game with its saves and
+settings, the Wine prefix, everything the setup built there) and the shortcuts the setup
+installed. It is announced in `entry_points.uninstall`; a game without one shows a disabled
+Remove button in the manager ("remove it by hand"). The file is the same for every game (copy it
+from any game folder): it reads what to remove from the game home's `game.json`.
+
+| Option | Meaning |
+|---|---|
+| `--home DIR` | Game home to remove (default: the home the script is in). |
+| `--yes` | Do not ask (for a tool that already asked the user). Without it, it asks in a terminal and stops with exit 3 when there is none. |
+| `--check` | Only list what would be removed. |
+
+Exit codes: 0 removed (or listed); 1 failed; 2 usage error; 3 needs you (the game is running, no
+confirmation, or the folder is not a game home with `game.json`, `config/` and `scripts/pi/`).
+It never removes apt packages, because other games and programs may use them; each game's README
+names the packages its setup installs.
+
+## Catalog
+
+`catalog.json` (`catalog_version` 2) is what general-pi-manager reads: one entry per game with
+`slug`, `short_id`, `title`, `path`, `wrapper_version`, `tag`, `status`, `min_manager_version`,
+`setup_interface`, `uninstall`, `summary`, `known_issues` (a count), `requirements`,
+`performance` (per measured target: device, RAM, config, typical and low FPS, rating) and
+`products` (GOG ids and the tested installer files with size and SHA-256). It is generated from
+each `game.json`; never edit it by hand.
+
+- `tag` is `<slug>/v<version>`, made when that version is merged to `main` (Versioning, below).
+  The manager downloads the game folder at that tag.
+- FPS in `targets[].fps` are the recorded measurements: `typical` is the average in the main
+  scene, or the lower end where only a range was recorded; `low` is the minimum. Nothing is
+  estimated; unknown values are `null`.
+- `rating` (`smooth`, `playable`, `rough`, `broken`) is set by a person who played that setup;
+  it stays `null` until then.
+- `min_manager_version` rises when the catalog changes in a way older managers cannot read.
 
 ## Versioning
 

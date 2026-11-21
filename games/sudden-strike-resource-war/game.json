@@ -4,10 +4,10 @@
   "short_id": "ssrw",
   "title": "Sudden Strike: Resource War",
   "wrapper": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "status": "playable",
     "phase": "4/5 boundary (split from sudden-strike-2; human play test passed there; Gate 3 menu approval pending)",
-    "updated": "2026-11-20",
+    "updated": "2026-11-21",
     "public_repo": null,
     "changelog": "CHANGELOG.md"
   },
@@ -34,13 +34,37 @@
   ],
   "targets": [
     {
-      "device": "pi4-4gb",
-      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "device": "pi4",
+      "ram_gb": 4,
+      "resolution": "800x600 stretched to 1280x720",
+      "config": "default setup",
+      "fps": {
+        "typical": 57.5,
+        "low": 50.6,
+        "scene": "the first single mission"
+      },
+      "tested": [
+        "first single mission",
+        "save/load"
+      ],
+      "rating": "smooth",
       "result": "57.5 avg / 50.6 min FPS in the first single mission (800x600 stretched to 1280x720); save and load work",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-play.env",
       "device_file": "config/pi4-ssrw.env"
     }
   ],
+  "notes": {
+    "summary": "Stretched full screen at 800x600 through Hangover with FEX and cnc-ddraw.",
+    "known_issues": [],
+    "tips": []
+  },
+  "requirements": {
+    "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+    "disk_gb": 3,
+    "tested_on": "Raspberry Pi 4, 4 GB",
+    "setup_time": null
+  },
   "stack": {
     "emulation": "Hangover 11.16 (system install) with the FEX back-end (HODLL=libwow64fex.dll); WowBox64 hangs on saving in this engine",
     "wine": "Hangover 11.16 (shared with the other projects)",
@@ -83,6 +107,7 @@
         "option": "--fit",
         "help": "full screen keeping the game's 4:3 shape (side bars on 16:9)"
       }
-    ]
+    ],
+    "uninstall": "scripts/pi/uninstall.sh"
   }
 }

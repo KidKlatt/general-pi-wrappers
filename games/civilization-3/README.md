@@ -12,6 +12,9 @@ the game's own 15 FPS. Tested: main menu areas, Quick Start, a custom game (Larg
 several turns (about 4 s per early turn), saving and loading, a large late-game save. A Pi 5
 should be noticeably smoother (not tested yet).
 
+**Known issue:** a sound bug makes a sound or the music loop (reported 2026-11-21; cause not
+found yet).
+
 ## Setup
 
 Needs Raspberry Pi OS 64-bit based on Debian 13 "trixie" with the default desktop (labwc,
@@ -53,6 +56,7 @@ yourself with `CIV3_MODE=1600x900 ~/civ3/scripts/pi/play.sh`. Smaller modes are 
 |---|---|
 | `scripts/pi/setup.sh` | One-time setup (see above) |
 | `scripts/pi/play.sh [--x11]` | Starts the game; used by the shortcut |
+| `scripts/pi/uninstall.sh` | Removes the game home (game, saves, Wine prefix) and its shortcuts; asks first (`--check` only lists, `--yes` skips the question); apt packages stay |
 | `scripts/pi/with-mode.sh` | Switches the display mode for one command and always restores it |
 | `config/track-hangover.env` | Hangover paths, the game's own prefix `~/civ3/prefixes/hangover` |
 | `config/pi4-civ3.env` | Game folder and executable |

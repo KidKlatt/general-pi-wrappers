@@ -74,7 +74,50 @@
         }
       }
     },
-    "targets": { "type": "array" },
+    "targets": {
+      "type": "array",
+      "description": "Measured setups. Values come from the game's records, never estimated.",
+      "items": {
+        "type": "object",
+        "required": ["device", "fps"],
+        "properties": {
+          "device": { "type": "string", "examples": ["pi4", "pi5"] },
+          "ram_gb": { "type": ["number", "null"] },
+          "resolution": { "type": "string" },
+          "config": { "type": "string", "description": "default setup, or what else was needed for these numbers" },
+          "fps": {
+            "type": "object",
+            "properties": {
+              "typical": { "type": ["number", "null"], "description": "measured average in the main scene; if only a range was recorded, its lower end" },
+              "low": { "type": ["number", "null"], "description": "measured minimum or the lower end of the worst case" },
+              "scene": { "type": "string" }
+            }
+          },
+          "rating": { "enum": [null, "smooth", "playable", "rough", "broken"], "description": "set by a person who played it; null until then" },
+          "tested": { "type": "array", "items": { "type": "string" } },
+          "result": { "type": "string", "description": "the original free-text result" }
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": { "type": "string", "description": "one line for the manager's library row" },
+        "known_issues": { "type": "array", "items": { "type": "string" } },
+        "tips": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "required": ["disk_gb"],
+      "properties": {
+        "os": { "type": "string" },
+        "disk_gb": { "type": "number", "description": "free space the setup checks for" },
+        "tested_on": { "type": "string" },
+        "setup_time": { "type": ["string", "null"], "description": "only if recorded" }
+      }
+    },
     "stack": { "type": "object" },
     "depends_on": { "type": "array", "description": "Things on the Pi this wrapper uses that another game's setup installs." },
     "provides": { "type": "array" },
@@ -86,6 +129,7 @@
         "setup_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard ones." },
         "play": { "type": ["string", "null"] },
         "play_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard --fps and --window." },
+        "uninstall": { "type": ["string", "null"], "enum": ["scripts/pi/uninstall.sh", null], "description": "README, \"Setup interface\"; absent: no uninstaller, remove by hand" },
         "desktop": { "type": "array", "items": { "type": "string" }, "description": "Shortcut templates; Exec/Icon paths use @GAME_HOME@." }
       }
     }

@@ -4,10 +4,10 @@
   "short_id": "stw",
   "title": "Shogun: Total War - Warlord Edition",
   "wrapper": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "status": "playable",
     "phase": "5 - Lock in and hand over (Gates 0-4 met; Gate 5 waits on the sound check)",
-    "updated": "2026-11-20",
+    "updated": "2026-11-21",
     "public_repo": null,
     "changelog": "CHANGELOG.md"
   },
@@ -36,13 +36,42 @@
   ],
   "targets": [
     {
-      "device": "pi4-4gb",
-      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "device": "pi4",
+      "ram_gb": 4,
+      "resolution": "full screen",
+      "config": "default setup",
+      "fps": {
+        "typical": 35.6,
+        "low": 24.5,
+        "scene": "battles while armies fight: three runs, 35.6-36.6 average, 24.5-27.6 minimum; campaign map about 35, menus 55-60"
+      },
+      "tested": [
+        "campaigns",
+        "custom and historical battles",
+        "save/load"
+      ],
+      "rating": "playable",
       "result": "Full screen. Gate 4 (3 runs): fighting 35.6-36.6 avg / 24.5-27.6 min FPS, 0 s below 15, max 56 C; campaign map about 35; menus 55-60",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-final-pi4.env",
       "device_file": "config/pi4-stw-lazy.env"
     }
   ],
+  "notes": {
+    "summary": "Base game and Mongol Invasion, full screen, through Box64 and a private Wine 9.17 built on the Pi.",
+    "known_issues": [
+      "Sound is not yet checked on better speakers (it plays; the development Pi's small speakers sounded poor)."
+    ],
+    "tips": [
+      "A 16:9 battle resolution (Options > Video) fills the screen without stretching."
+    ]
+  },
+  "requirements": {
+    "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+    "disk_gb": 12,
+    "tested_on": "Raspberry Pi 4, 4 GB",
+    "setup_time": "about an hour on a Pi 4 (builds Box64, Wine parts and Mesa)"
+  },
   "stack": {
     "emulation": "Box64 0.4.5 (commit a46caf3, -DRPI4ARM64=1), built from source into ~/stw/box64 by the setup",
     "wine": "Kron4ek Wine 9.17 amd64-wow64 in ~/stw/wine-x64-9.17, with this project's winex11.so (built from the Wine 9.17 source)",
@@ -93,6 +122,7 @@
         "option": "--window",
         "help": "800x600 Wine desktop window"
       }
-    ]
+    ],
+    "uninstall": "scripts/pi/uninstall.sh"
   }
 }

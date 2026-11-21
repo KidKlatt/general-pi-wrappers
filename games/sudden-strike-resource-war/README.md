@@ -40,6 +40,7 @@ you have to fix (the message starts with `NEEDS YOU:`). Tested GOG build and fil
 |---|---|
 | `scripts/pi/setup.sh` | Whole setup (see above) |
 | `scripts/pi/play.sh [--fps] [--fit\|--window]` | Starts the game; used by the desktop shortcut |
+| `scripts/pi/uninstall.sh` | Removes the game home (game, saves, Wine prefix) and its shortcuts; asks first (`--check` only lists, `--yes` skips the question); apt packages stay |
 | `scripts/pi/install-cnc-ddraw.sh` | Downloads cnc-ddraw 7.1.0.0 from its GitHub release (SHA-256 checked) and installs it into the game folder with `config/cnc-ddraw/ddraw.ini` |
 | `config/pi4-ssrw.env` | Device and game settings (game folder `game`, executable) |
 | `config/track-hangover.env` | Hangover paths, own prefix `~/ssrw/prefixes/hangover`, FEX back-end |
