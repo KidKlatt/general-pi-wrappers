@@ -62,6 +62,8 @@ STEPS=7; STEP=0
 step()  { STEP=$((STEP+1)); printf '\n==> [%d/%d] %s\n' "$STEP" "$STEPS" "$*"; }
 die()   { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
 needs() { printf '\nNEEDS YOU: %s\n' "$*" >&2; exit 3; }
+# sudo with a graphical password box when a tool provides one (SUDO_ASKPASS, README "Setup interface").
+sudo_() { if [ -n "${SUDO_ASKPASS:-}" ]; then sudo -A "$@"; else sudo "$@"; fi; }
 done_() { [ -f "$MARK/$1.done" ]; }
 mark()  { touch "$MARK/$1.done"; }
 existing_dir() { local d="$1"; while [ ! -d "$d" ]; do d="$(dirname "$d")"; done; echo "$d"; }
@@ -75,7 +77,7 @@ apt_sim() {
     [ "$ALLOW_UPGRADES" = 1 ] || needs "apt would upgrade or remove the packages above. Check them, then rerun with --allow-upgrades if that is fine."
   fi
 }
-apt_install() { apt_sim "$@"; sudo apt-get install -y --no-install-recommends "$@"; }
+apt_install() { apt_sim "$@"; sudo_ apt-get install -y --no-install-recommends "$@"; }
 
 # Records which installer was used and whether it is the tested build (read by installed.json).
 hash_installer() {
@@ -119,13 +121,14 @@ step "Checks"
 [ "${VERSION_CODENAME:-}" = trixie ] || needs "needs Raspberry Pi OS / Debian 13 'trixie' (Hangover's package is built for it); this is ${PRETTY_NAME:-unknown}."
 [ "$(getconf PAGESIZE)" = 4096 ] || needs "the kernel uses $(getconf PAGESIZE)-byte pages; Hangover needs 4 KB pages. On a Pi 5 add 'kernel=kernel8.img' to /boot/firmware/config.txt and reboot."
 INSTALLER=""
-if ! done_ extract; then
+HAVE_GAME=0; [ -f "$CIV3_HOME/game/Conquests/Civ3Conquests.exe" ] && HAVE_GAME=1
+if ! done_ extract && [ "$HAVE_GAME" = 0 ]; then
   [ -n "$INSTALLER_DIR" ] || needs "give the folder with your GOG installer: --installer DIR"
   INSTALLER=$(ls "$INSTALLER_DIR"/setup_civilization3_complete_*.exe 2>/dev/null | head -1)
   [ -n "$INSTALLER" ] || needs "no setup_civilization3_complete_*.exe in $INSTALLER_DIR"
 fi
 FREE=$(df -Pk "$(existing_dir "$CIV3_HOME")" | awk 'NR==2{print $4}')
-[ "$FREE" -gt 5000000 ] || done_ extract || needs "needs about 5 GB free in $CIV3_HOME (game 1.8 GB, Wine prefix 2.3 GB)"
+[ "$FREE" -gt 5000000 ] || done_ extract || [ "$HAVE_GAME" = 1 ] || needs "needs about 5 GB free in $CIV3_HOME (game 1.8 GB, Wine prefix 2.3 GB)"
 echo "game home: $CIV3_HOME"
 if [ "$CHECK" = 1 ]; then
   need=(); for p in "${APT_PKGS[@]}"; do dpkg -s "$p" >/dev/null 2>&1 || need+=("$p"); done
@@ -169,6 +172,11 @@ chmod +x "$CIV3_HOME"/scripts/pi/*.sh
 echo "done"
 
 step "Extracting the game (about 2-3 minutes)"
+if ! done_ extract && [ "$HAVE_GAME" = 1 ]; then
+  # Set up earlier without markers: keep the game folder with its saves and settings.
+  echo "game folder already present: kept (saves and settings stay)."
+  mark extract
+fi
 if ! done_ extract; then
   hash_installer
   rm -rf "$CIV3_HOME/game.x" "$CIV3_HOME/game"
@@ -202,6 +210,9 @@ echo "done"
 step "Wine prefix and registry keys"
 set -a; . "$CIV3_HOME/config/track-hangover.env"; set +a
 export WINEPREFIX="$CIV3_HOME/prefixes/hangover" HODLL=wowbox64.dll WINEDEBUG=-all WINEDLLOVERRIDES="mscoree=;mshtml="
+if ! done_ prefix && [ -f "$WINEPREFIX/system.reg" ]; then
+  echo "Wine prefix already present: kept ($WINEPREFIX)."; mark prefix
+fi
 if ! done_ prefix; then
   env -u DISPLAY $WINE_CMD wineboot -i
   $WINESERVER_CMD -w

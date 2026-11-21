@@ -67,6 +67,8 @@ STEPS=8; STEP=0
 step()  { STEP=$((STEP+1)); printf '\n==> [%d/%d] %s\n' "$STEP" "$STEPS" "$*"; }
 die()   { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
 needs() { printf '\nNEEDS YOU: %s\n' "$*" >&2; exit 3; }
+# sudo with a graphical password box when a tool provides one (SUDO_ASKPASS, README "Setup interface").
+sudo_() { if [ -n "${SUDO_ASKPASS:-}" ]; then sudo -A "$@"; else sudo "$@"; fi; }
 done_() { [ -f "$MARK/$1.done" ]; }
 mark()  { touch "$MARK/$1.done"; }
 existing_dir() { local d="$1"; while [ ! -d "$d" ]; do d="$(dirname "$d")"; done; echo "$d"; }
@@ -81,7 +83,7 @@ apt_sim() {
     [ "$ALLOW_UPGRADES" = 1 ] || needs "apt would upgrade or remove the packages above. Check them, then rerun with --allow-upgrades if that is fine."
   fi
 }
-apt_install() { apt_sim "$@"; sudo apt-get install -y --no-install-recommends "$@"; }
+apt_install() { apt_sim "$@"; sudo_ apt-get install -y --no-install-recommends "$@"; }
 
 # Records which installer was used and whether it is the tested build (read by installed.json).
 hash_installer() {
@@ -141,7 +143,7 @@ if ! done_ extract && [ ! -f "$G/game_exe.exe" ]; then
 fi
 FREE=$(df -Pk "$(existing_dir "$H_")" | awk 'NR==2{print $4}')
 [ "$FREE" -gt 3000000 ] || done_ extract || [ -f "$G/game_exe.exe" ] || needs "needs about 3 GB free in $H_ (game 0.5 GB, Wine prefix about 1.5 GB)"
-[ "$CHECK" = 1 ] || sudo true || needs "needs sudo for apt."
+[ "$CHECK" = 1 ] || sudo_ true || needs "needs sudo for apt."
 echo "game home: $H_"
 if [ "$CHECK" = 1 ]; then
   need=($(missing "${APT_PKGS[@]}"))

@@ -3,6 +3,18 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.3.0 — 2026-11-21
+
+No change to the tested setup. `setup.sh --check` passes against the existing
+game home on the development Pi.
+
+- `sudo` runs through `sudo_`: with `SUDO_ASKPASS` set (general-pi-manager's password box) it
+  uses `sudo -A`; in a terminal nothing changes.
+- A game folder, Hangover, the patched Mesa or the Wine prefix already in place (set up before
+  step markers existed) is kept instead of unpacked or built again, so saves stay.
+- apt: only missing packages are installed and simulated; installed ones are no longer offered
+  for upgrade (the check stopped on `patch` on the development Pi).
+
 ## 1.2.0 — 2026-11-21
 
 No change to the tested setup.

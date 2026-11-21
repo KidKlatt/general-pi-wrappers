@@ -84,6 +84,9 @@ STEPS=11; STEP=0
 step()  { STEP=$((STEP+1)); printf '\n==> [%d/%d] %s\n' "$STEP" "$STEPS" "$*"; }
 die()   { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
 needs() { printf '\nNEEDS YOU: %s\n' "$*" >&2; exit 3; }
+# sudo with a graphical password box when a tool provides one (SUDO_ASKPASS, README "Setup interface").
+sudo_() { if [ -n "${SUDO_ASKPASS:-}" ]; then sudo -A "$@"; else sudo "$@"; fi; }
+missing_pkgs() { local p; for p in "$@"; do dpkg -s "$p" >/dev/null 2>&1 || echo "$p"; done; }
 done_() { [ -f "$MARK/$1.done" ]; }
 mark()  { touch "$MARK/$1.done"; }
 existing_dir() { local d="$1"; while [ ! -d "$d" ]; do d="$(dirname "$d")"; done; echo "$d"; }
@@ -111,7 +114,7 @@ apt_sim() {
 apt_install() {
   apt_sim "$@"
   if printf '%s\n' "$SIM" | grep -q '^Inst '; then
-    sudo apt-get install -y --no-install-recommends "$@"
+    sudo_ apt-get install -y --no-install-recommends "$@"
   fi
 }
 
@@ -165,7 +168,7 @@ to /boot/firmware/config.txt and reboot, then run this script again."
 fi
 FREE_GB=$(( $(df -Pk "$(existing_dir "$STW")" | awk 'NR==2{print $4}') / 1024 / 1024 ))
 [ "$FREE_GB" -ge 12 ] || done_ mesa || needs "needs about 12 GB free for $STW; only ${FREE_GB} GB free."
-[ "$CHECK" = 1 ] || sudo true || needs "needs sudo for apt."
+[ "$CHECK" = 1 ] || sudo_ true || needs "needs sudo for apt."
 grep -q "Raspberry Pi 4" /proc/device-tree/model 2>/dev/null ||
   echo "NOTE: this is not a Pi 4 ($(tr -d '\0' </proc/device-tree/model 2>/dev/null)). The setup was only tested on a Pi 4."
 EXE=""
@@ -176,7 +179,10 @@ if [ ! -f "$STW/game-lazy/ShogunM.exe" ]; then
 fi
 echo "OK: $(tr -d '\0' </proc/device-tree/model 2>/dev/null), ${PRETTY_NAME:-?}, ${FREE_GB} GB free, into $STW"
 if [ "$CHECK" = 1 ]; then
-  done_ apt || apt_sim "${APT_PKGS[@]}"
+  if ! done_ apt; then
+    need=($(missing_pkgs "${APT_PKGS[@]}"))
+    if [ ${#need[@]} -gt 0 ]; then echo "apt will install: ${need[*]}"; apt_sim "${need[@]}"; fi
+  fi
   [ -z "$EXE" ] || hash_installer
   printf '\nREADY: this Pi can run the setup.\n'; exit 0
 fi
@@ -200,8 +206,13 @@ echo "OK"
 # ---------------------------------------------------------------------------------------------
 step "Installing helper and build packages (apt, simulated first)"
 if ! done_ apt; then
-  sudo apt-get update
-  apt_install "${APT_PKGS[@]}"
+  need=($(missing_pkgs "${APT_PKGS[@]}"))
+  if [ ${#need[@]} -eq 0 ]; then
+    echo "all helper and build packages are installed."
+  else
+    sudo_ apt-get update
+    apt_install "${need[@]}"
+  fi
   mark apt
 else echo "already done"; fi
 
