@@ -4,10 +4,10 @@
   "short_id": "civ3",
   "title": "Sid Meier's Civilization III Complete",
   "wrapper": {
-    "version": "0.10.0",
+    "version": "0.11.0",
     "status": "playable",
     "phase": "4 done; setup.sh tested from a clean folder",
-    "updated": "2026-11-20",
+    "updated": "2026-11-21",
     "public_repo": null,
     "changelog": "CHANGELOG.md"
   },
@@ -35,11 +35,40 @@
   "targets": [
     {
       "device": "pi4",
-      "resolution": "1440x810 (widescreen, output switched while playing)",
-      "fps": "late game scroll 13-15, early 18-20 (2.0 GHz overclock: 14.4-14.7 late)",
-      "tested": "menus, quick start, custom game, turns, save/load, late-game save, launcher"
+      "ram_gb": 4,
+      "resolution": "1440x810",
+      "config": "default setup",
+      "fps": {
+        "typical": 18,
+        "low": 13,
+        "scene": "map scrolling: early game 18-20, large late game 13-15"
+      },
+      "tested": [
+        "menus",
+        "quick start",
+        "custom game",
+        "turns",
+        "save/load",
+        "late-game save",
+        "launcher"
+      ],
+      "rating": null,
+      "result": "late game scroll 13-15, early 18-20 (2.0 GHz overclock: 14.4-14.7 late); menus, quick start, custom game, turns, save/load, late-game save, launcher"
     }
   ],
+  "notes": {
+    "summary": "All three Civilization III games through Conquests, in widescreen, through Hangover with WowBox64 and Wine's Wayland driver.",
+    "known_issues": [],
+    "tips": [
+      "A 2.0 GHz overclock gives about 7 % more in large late games."
+    ]
+  },
+  "requirements": {
+    "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+    "disk_gb": 5,
+    "tested_on": "Raspberry Pi 4, 4 GB",
+    "setup_time": null
+  },
   "stack": {
     "track": "hangover",
     "wine": "Hangover 11.16 (system)",
@@ -72,6 +101,7 @@
         "option": "--x11",
         "help": "run through Xwayland instead of Wine's Wayland driver (slower)"
       }
-    ]
+    ],
+    "uninstall": "scripts/pi/uninstall.sh"
   }
 }

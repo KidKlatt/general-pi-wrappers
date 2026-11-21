@@ -3,6 +3,17 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.2.0 — 2026-11-21
+
+No change to the tested setup.
+
+- **New: `scripts/pi/uninstall.sh`** (setup interface, general-pi-wrappers README): removes the
+  game home (game, saves, settings, Wine prefix) and the shortcuts after a confirmation
+  (`--yes` skips it, `--check` only lists); never removes apt packages; refuses while the game
+  runs or when the folder is not this game's home.
+- `game.json`: structured `targets` (FPS as numbers, what was tested), `notes` (summary, known
+  issues, tips) and `requirements`, read by the catalog.
+
 ## 1.1.0 — 2026-11-20
 
 Tested against GOG product `1707288232` (Sudden Strike: Resource War, installer build `13581`). The setup reproduces

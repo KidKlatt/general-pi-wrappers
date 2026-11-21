@@ -1,20 +1,48 @@
 {
-  "catalog_version": 1,
+  "catalog_version": 2,
   "games": [
     {
       "slug": "civilization-3",
       "short_id": "civ3",
       "title": "Sid Meier's Civilization III Complete",
       "path": "games/civilization-3",
-      "wrapper_version": "0.10.0",
+      "wrapper_version": "0.11.0",
+      "tag": "civilization-3/v0.11.0",
       "status": "playable",
+      "min_manager_version": "0.1.0",
       "setup_interface": 1,
+      "uninstall": true,
+      "summary": "All three Civilization III games through Conquests, in widescreen, through Hangover with WowBox64 and Wine's Wayland driver.",
+      "known_issues": 0,
+      "requirements": {
+        "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+        "disk_gb": 5,
+        "tested_on": "Raspberry Pi 4, 4 GB",
+        "setup_time": null
+      },
+      "performance": [
+        {
+          "device": "pi4",
+          "ram_gb": 4,
+          "config": "default setup",
+          "fps_typical": 18,
+          "fps_low": 13,
+          "rating": null
+        }
+      ],
       "products": [
         {
           "product_id": "1471405734",
           "title": "Sid Meier's Civilization III Complete",
           "gog_build_id": null,
-          "gog_installer_build": null
+          "gog_installer_build": null,
+          "files": [
+            {
+              "name": "setup_civilization3_complete_2.0.0.7.exe",
+              "bytes": 1370659544,
+              "sha256": "4ad54ca308ea93af49b0db3a795736eda91aed61c8cd73b18196802d0f4d2395"
+            }
+          ]
         }
       ]
     },
@@ -23,15 +51,48 @@
       "short_id": "mtw",
       "title": "Medieval: Total War",
       "path": "games/medieval-total-war",
-      "wrapper_version": "1.1.0",
+      "wrapper_version": "1.2.0",
+      "tag": "medieval-total-war/v1.2.0",
       "status": "released",
+      "min_manager_version": "0.1.0",
       "setup_interface": 1,
+      "uninstall": true,
+      "summary": "Full screen at 800x600 through Hangover (WowBox64), a Direct3D 9 helper DLL and a patched Mesa.",
+      "known_issues": 2,
+      "requirements": {
+        "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+        "disk_gb": 10,
+        "tested_on": "Raspberry Pi 4, 4 GB",
+        "setup_time": "about 45 minutes on a Pi 4 (the Mesa build alone about 20)"
+      },
+      "performance": [
+        {
+          "device": "pi4",
+          "ram_gb": 4,
+          "config": "default setup",
+          "fps_typical": 17,
+          "fps_low": null,
+          "rating": null
+        }
+      ],
       "products": [
         {
           "product_id": "1397939414",
           "title": "Medieval: Total War",
           "gog_build_id": "59131712679784536",
-          "gog_installer_build": "86311"
+          "gog_installer_build": "86311",
+          "files": [
+            {
+              "name": "setup_medieval_total_war_gog_v1_(86311).exe",
+              "bytes": 2601304,
+              "sha256": "002c6e3c18367a703429e9cd535736c5e4794f0fe58a41510682942897a7fa5c"
+            },
+            {
+              "name": "setup_medieval_total_war_gog_v1_(86311)-1.bin",
+              "bytes": 1609605265,
+              "sha256": "cf0feed7f7bff4002957ccd38e02748e06286ad86c6ba0c31e381889cebcb1c7"
+            }
+          ]
         }
       ]
     },
@@ -40,15 +101,43 @@
       "short_id": "stw",
       "title": "Shogun: Total War - Warlord Edition",
       "path": "games/shogun-total-war",
-      "wrapper_version": "1.1.0",
+      "wrapper_version": "1.2.0",
+      "tag": "shogun-total-war/v1.2.0",
       "status": "playable",
+      "min_manager_version": "0.1.0",
       "setup_interface": 1,
+      "uninstall": true,
+      "summary": "Base game and Mongol Invasion, full screen, through Box64 and a private Wine 9.17 built on the Pi.",
+      "known_issues": 1,
+      "requirements": {
+        "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+        "disk_gb": 12,
+        "tested_on": "Raspberry Pi 4, 4 GB",
+        "setup_time": "about an hour on a Pi 4 (builds Box64, Wine parts and Mesa)"
+      },
+      "performance": [
+        {
+          "device": "pi4",
+          "ram_gb": 4,
+          "config": "default setup",
+          "fps_typical": 35.6,
+          "fps_low": 24.5,
+          "rating": null
+        }
+      ],
       "products": [
         {
           "product_id": "1874325037",
           "title": "SHOGUN: Total War",
           "gog_build_id": "59191766611906857",
-          "gog_installer_build": "86790"
+          "gog_installer_build": "86790",
+          "files": [
+            {
+              "name": "setup_shogun_total_wartm_gog_v1_(86790).exe",
+              "bytes": 1564964984,
+              "sha256": "bed36e39c45bc447f21a25c7de5f3f09a09587ac176129cd3621fe9c5f216b28"
+            }
+          ]
         }
       ]
     },
@@ -57,15 +146,43 @@
       "short_id": "ss2",
       "title": "Sudden Strike 2",
       "path": "games/sudden-strike-2",
-      "wrapper_version": "1.1.0",
+      "wrapper_version": "1.2.0",
+      "tag": "sudden-strike-2/v1.2.0",
       "status": "playable",
+      "min_manager_version": "0.1.0",
       "setup_interface": 1,
+      "uninstall": true,
+      "summary": "Stretched full screen through Hangover with FEX and cnc-ddraw; an optional 1280x720 widescreen patch.",
+      "known_issues": 0,
+      "requirements": {
+        "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+        "disk_gb": 3,
+        "tested_on": "Raspberry Pi 4, 4 GB",
+        "setup_time": null
+      },
+      "performance": [
+        {
+          "device": "pi4",
+          "ram_gb": 4,
+          "config": "with the optional widescreen patch (not applied by the setup)",
+          "fps_typical": 59.7,
+          "fps_low": 51.7,
+          "rating": null
+        }
+      ],
       "products": [
         {
           "product_id": "1443986935",
           "title": "Sudden Strike 2",
           "gog_build_id": "50364933495991234",
-          "gog_installer_build": "13718"
+          "gog_installer_build": "13718",
+          "files": [
+            {
+              "name": "setup_sudden_strike_2_2.2_(13718).exe",
+              "bytes": 623071288,
+              "sha256": "b78b6c41678352babb5eb15a855c3ea3e78dcb10309cfc973a8bbe653f5f8109"
+            }
+          ]
         }
       ]
     },
@@ -74,15 +191,43 @@
       "short_id": "ssrw",
       "title": "Sudden Strike: Resource War",
       "path": "games/sudden-strike-resource-war",
-      "wrapper_version": "1.1.0",
+      "wrapper_version": "1.2.0",
+      "tag": "sudden-strike-resource-war/v1.2.0",
       "status": "playable",
+      "min_manager_version": "0.1.0",
       "setup_interface": 1,
+      "uninstall": true,
+      "summary": "Stretched full screen at 800x600 through Hangover with FEX and cnc-ddraw.",
+      "known_issues": 0,
+      "requirements": {
+        "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+        "disk_gb": 3,
+        "tested_on": "Raspberry Pi 4, 4 GB",
+        "setup_time": null
+      },
+      "performance": [
+        {
+          "device": "pi4",
+          "ram_gb": 4,
+          "config": "default setup",
+          "fps_typical": 57.5,
+          "fps_low": 50.6,
+          "rating": null
+        }
+      ],
       "products": [
         {
           "product_id": "1707288232",
           "title": "Sudden Strike: Resource War",
           "gog_build_id": "50348383013086683",
-          "gog_installer_build": "13581"
+          "gog_installer_build": "13581",
+          "files": [
+            {
+              "name": "setup_sudden_strike_resource_war_2.4_(13581).exe",
+              "bytes": 476182376,
+              "sha256": "13eb17aabde8031175fe10d88623b40fada3500b3abb663ed1132f095d785fff"
+            }
+          ]
         }
       ]
     }

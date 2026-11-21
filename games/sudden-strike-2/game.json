@@ -4,10 +4,10 @@
   "short_id": "ss2",
   "title": "Sudden Strike 2",
   "wrapper": {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "status": "playable",
     "phase": "4/5 boundary (human play test passed; Gate 3 menu approval pending)",
-    "updated": "2026-11-20",
+    "updated": "2026-11-21",
     "public_repo": null,
     "changelog": "CHANGELOG.md"
   },
@@ -35,13 +35,39 @@
   ],
   "targets": [
     {
-      "device": "pi4-4gb",
-      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
+      "device": "pi4",
+      "ram_gb": 4,
+      "resolution": "1280x720",
+      "config": "with the optional widescreen patch (not applied by the setup)",
+      "fps": {
+        "typical": 59.7,
+        "low": 51.7,
+        "scene": "a mission"
+      },
+      "tested": [
+        "missions",
+        "save/load"
+      ],
+      "rating": null,
       "result": "About 60 FPS in a mission (true 1280x720 with the widescreen patch)",
+      "os": "Raspberry Pi OS 64-bit (Debian 13 trixie), labwc/Wayland + Xwayland",
       "profile": "config/profile-play.env",
       "device_file": "config/pi4-ss2.env"
     }
   ],
+  "notes": {
+    "summary": "Stretched full screen through Hangover with FEX and cnc-ddraw; an optional 1280x720 widescreen patch.",
+    "known_issues": [],
+    "tips": [
+      "The widescreen patch is a community tool that is not included; see the README, section Widescreen."
+    ]
+  },
+  "requirements": {
+    "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
+    "disk_gb": 3,
+    "tested_on": "Raspberry Pi 4, 4 GB",
+    "setup_time": null
+  },
   "stack": {
     "emulation": "Hangover 11.16 (system install) with the FEX back-end (HODLL=libwow64fex.dll); WowBox64 hangs on saving",
     "wine": "Hangover 11.16 (shared with MTW)",
@@ -89,6 +115,7 @@
         "option": "--fit",
         "help": "full screen keeping the game's 4:3 shape (side bars on 16:9)"
       }
-    ]
+    ],
+    "uninstall": "scripts/pi/uninstall.sh"
   }
 }

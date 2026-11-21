@@ -53,6 +53,7 @@ yourself with `CIV3_MODE=1600x900 ~/civ3/scripts/pi/play.sh`. Smaller modes are 
 |---|---|
 | `scripts/pi/setup.sh` | One-time setup (see above) |
 | `scripts/pi/play.sh [--x11]` | Starts the game; used by the shortcut |
+| `scripts/pi/uninstall.sh` | Removes the game home (game, saves, Wine prefix) and its shortcuts; asks first (`--check` only lists, `--yes` skips the question); apt packages stay |
 | `scripts/pi/with-mode.sh` | Switches the display mode for one command and always restores it |
 | `config/track-hangover.env` | Hangover paths, the game's own prefix `~/civ3/prefixes/hangover` |
 | `config/pi4-civ3.env` | Game folder and executable |
