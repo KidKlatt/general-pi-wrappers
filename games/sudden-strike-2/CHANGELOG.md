@@ -3,6 +3,21 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 builds it was tested against.
 
+## 1.1.0 — 2026-11-20
+
+Tested against GOG product `1443986935` (Sudden Strike 2, installer build `13718`). The setup reproduces
+the tested setup; the script itself has not yet run on a clean Pi.
+
+- **New: `scripts/pi/setup.sh`** (standard setup interface, general-pi-wrappers README,
+  "Setup interface"): installs `innoextract`, `unzip`, `curl` and Hangover 11.16 with
+  `hangover-libwow64fex` if missing, extracts the installer (with a hard-linked clean copy `game-ss2.pristine`), applies GOG's
+  `winmm_override` music files, sets `VideoMode=2`, installs cnc-ddraw, creates the
+  Wine prefix and adds the shortcut. Options `--installer --home --allow-upgrades --no-desktop
+  --jobs --check`; exit codes 0/1/2/3. A game folder or prefix already there is kept.
+- No longer depends on another game's setup for Hangover or FEX.
+- `play.sh` finds the game home from its own location and the config follows the home;
+  the shortcut uses `@GAME_HOME@`, filled in by the setup.
+
 ## 1.0.1 — 2026-11-20
 
 Tested against GOG product `1443986935` (Sudden Strike 2, installer build `13718`). No change to

@@ -6,8 +6,9 @@
       "short_id": "civ3",
       "title": "Sid Meier's Civilization III Complete",
       "path": "games/civilization-3",
-      "wrapper_version": "0.9.1",
+      "wrapper_version": "0.10.0",
       "status": "playable",
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1471405734",
@@ -22,8 +23,9 @@
       "short_id": "mtw",
       "title": "Medieval: Total War",
       "path": "games/medieval-total-war",
-      "wrapper_version": "1.0.0",
+      "wrapper_version": "1.1.0",
       "status": "released",
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1397939414",
@@ -38,8 +40,9 @@
       "short_id": "stw",
       "title": "Shogun: Total War - Warlord Edition",
       "path": "games/shogun-total-war",
-      "wrapper_version": "1.0.1",
+      "wrapper_version": "1.1.0",
       "status": "playable",
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1874325037",
@@ -54,8 +57,9 @@
       "short_id": "ss2",
       "title": "Sudden Strike 2",
       "path": "games/sudden-strike-2",
-      "wrapper_version": "1.0.1",
+      "wrapper_version": "1.1.0",
       "status": "playable",
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1443986935",
@@ -70,8 +74,9 @@
       "short_id": "ssrw",
       "title": "Sudden Strike: Resource War",
       "path": "games/sudden-strike-resource-war",
-      "wrapper_version": "1.0.1",
+      "wrapper_version": "1.1.0",
       "status": "playable",
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1707288232",

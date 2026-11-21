@@ -14,6 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 STATUSES = {"planned", "in-progress", "playable", "released", "retired"}
+STANDARD_SETUP_OPTIONS = ("--installer", "--home", "--allow-upgrades", "--no-desktop", "--jobs", "--check")
 
 
 def problems(game: dict, folder: str) -> list[str]:
@@ -36,6 +37,36 @@ def problems(game: dict, folder: str) -> list[str]:
         for f in p.get("installer", {}).get("files", []):
             if not re.fullmatch(r"[0-9a-f]{64}", f.get("sha256", "")):
                 out.append(f"bad sha256 for {f.get('name')}")
+    out += interface_problems(game.get("entry_points", {}), ROOT / "games" / folder)
+    return out
+
+
+def interface_problems(ep: dict, folder: Path) -> list[str]:
+    """The standard setup interface (README, "Setup interface"), version 1."""
+    out = []
+    for key in ("setup_options", "play_options"):
+        for o in ep.get(key, []):
+            if not (isinstance(o, dict) and re.fullmatch(r"--[a-z0-9-]+", str(o.get("option", ""))) and o.get("help")):
+                out.append(f"entry_points.{key}: each entry needs option (--name) and help")
+    if ep.get("setup_interface") is None:
+        return out
+    if ep.get("setup_interface") != 1:
+        out.append("entry_points.setup_interface must be 1")
+    if ep.get("setup") != "scripts/pi/setup.sh":
+        out.append("entry_points.setup must be scripts/pi/setup.sh with setup_interface")
+    for key in ("setup", "play"):
+        if ep.get(key) and not (folder / ep[key]).is_file():
+            out.append(f"entry_points.{key}: {ep[key]} not found")
+    script = folder / "scripts/pi/setup.sh"
+    if script.is_file():
+        text = script.read_text(encoding="utf-8")
+        for opt in STANDARD_SETUP_OPTIONS:
+            if f"{opt})" not in text:
+                out.append(f"setup.sh does not accept {opt}")
+    for d in ep.get("desktop", []):
+        p = folder / d
+        if p.is_file() and "/home/" in p.read_text(encoding="utf-8"):
+            out.append(f"{d}: use @GAME_HOME@ instead of a /home/ path")
     return out
 
 
@@ -61,6 +92,7 @@ def build() -> tuple[dict, list[str]]:
             "path": f"games/{folder}",
             "wrapper_version": game.get("wrapper", {}).get("version"),
             "status": game.get("wrapper", {}).get("status"),
+            "setup_interface": game.get("entry_points", {}).get("setup_interface"),
             "products": [
                 {
                     "product_id": str(p.get("product_id")),

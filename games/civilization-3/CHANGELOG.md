@@ -3,6 +3,23 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 0.10.0 — 2026-11-20
+
+Tested against GOG product `1471405734`, offline installer `setup_civilization3_complete_2.0.0.7.exe`
+(GOG version 2.0.0.7, SHA-256 `4ad54ca3…2395`). Not yet run on a Pi in this version.
+
+- **Standard setup interface** (general-pi-wrappers README, "Setup interface"): the setup is
+  `scripts/pi/setup.sh`. It accepts `--installer DIR`, `--home DIR`,
+  `--allow-upgrades`, `--no-desktop`, `--jobs N` and `--check` (checks only, changes nothing).
+  Exit codes: 0 done, 1 failed (rerun to resume), 2 usage error, 3 needs you (the message starts
+  with `NEEDS YOU:`). Progress lines read `==> [n/N] step`.
+- On success the setup writes `<home>/.setup/installed.json` (slug, wrapper version, installer,
+  whether it is the tested build, date) and copies `game.json` into the game home.
+- Shortcuts go into the app menu and, if `~/Desktop` exists, onto the desktop; the `.desktop`
+  files use `@GAME_HOME@`, which the setup replaces with the game home.
+- `play.sh` finds the game home from its own location, so a game set up with
+  `--home` starts from its shortcut.
+
 ## 0.9.1 — 2026-11-20
 
 Tested against GOG product `1471405734`, offline installer `setup_civilization3_complete_2.0.0.7.exe`

@@ -1,6 +1,6 @@
 # Setting up Shogun: Total War on a new Raspberry Pi
 
-One script, [`scripts/pi/setup-new-pi.sh`](../scripts/pi/setup-new-pi.sh), repeats the working
+One script, [`scripts/pi/setup.sh`](../scripts/pi/setup.sh), repeats the working
 Pi 4 setup: Box64 + Wine 9.17 (x86-64, WoW64), this project's own `winex11.so` and `dsound.dll`,
 the d3d9lazy shim, a private patched Mesa, and the full-screen launcher `play.sh` with desktop
 shortcuts. It needs nothing from any other project: every component is downloaded from its
@@ -32,14 +32,16 @@ called by full path, with its own prefix.
 3. **Run the setup** on the Pi, in tmux (SSH sessions can drop):
    ```sh
    tmux new -s stw
-   bash <project folder>/scripts/pi/setup-new-pi.sh --installer ~/gog
+   bash <project folder>/scripts/pi/setup.sh --installer ~/gog
    ```
    It copies the project to `~/stw`, installs missing apt packages (simulated first; it stops if
    anything would be upgraded or removed, override with `--allow-upgrades`), builds Box64, unpacks
    Wine, builds `dsound.dll` and `winex11.so` from the Wine source, builds Mesa, unpacks the game,
-   adds the shim, creates the Wine prefix and puts two shortcuts on the desktop. If a step fails,
-   fix the cause and run the same command again: finished steps are skipped (markers in
-   `~/stw/.setup/`).
+   adds the shim, creates the Wine prefix and adds two shortcuts (app menu, and the desktop if
+   `~/Desktop` exists). If a step fails, fix the cause and run the same command again: finished
+   steps are skipped (markers in `~/stw/.setup/`). Exit code 3 means it stopped on something you
+   have to fix (for example disk space or 4 KB pages); `--check` runs only the checks and changes
+   nothing. Options: `--home DIR` (default `~/stw`), `--no-desktop`, `--jobs N`, `--allow-upgrades`.
 4. **Play**: double-click "Shogun Total War" on the desktop. The first start takes longer.
 
 ## After the setup

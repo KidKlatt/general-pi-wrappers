@@ -3,7 +3,7 @@
 Two changes: no XLockDisplay around GLX calls, the fix for the campaign-start hang (experiments
 43-45, 52-56), and full-screen mode changes on Xwayland (experiment 58, below). It is installed only
 in this project's own Wine copy, `~/stw/wine-x64-9.17` (Kron4ek's vanilla
-`wine-9.17-amd64-wow64` build, downloaded by `scripts/pi/setup-new-pi.sh`).
+`wine-9.17-amd64-wow64` build, downloaded by `scripts/pi/setup.sh`).
 
 **The deadlock.** Entering the campaign map, Shogun switches from Direct3D 9 to DirectDraw. Wine's
 DirectDraw device creates an OpenGL context: winex11 `glxdrv_wglCreateContextAttribsARB` calls

@@ -4,7 +4,7 @@
   "short_id": "ssrw",
   "title": "Sudden Strike: Resource War",
   "wrapper": {
-    "version": "1.0.1",
+    "version": "1.1.0",
     "status": "playable",
     "phase": "4/5 boundary (split from sudden-strike-2; human play test passed there; Gate 3 menu approval pending)",
     "updated": "2026-11-20",
@@ -56,17 +56,33 @@
   },
   "depends_on": [
     {
-      "game": "medieval-total-war",
-      "path": "system Hangover 11.16 (hangover-wine) + hangover-libwow64fex",
-      "why": "MTW's setup-new-pi.sh installs hangover-wine but not hangover-libwow64fex; on the original Pi FEX was installed during MTW's experiments. No script of this project installs either yet."
+      "project": "system",
+      "path": "/usr (hangover-wine 11.16, hangover-libwow64fex)",
+      "what": "Hangover 11.16 with its FEX back-end, installed by setup.sh from the official release if missing"
     }
   ],
   "provides": [],
   "entry_points": {
-    "setup": null,
+    "setup": "scripts/pi/setup.sh",
     "play": "scripts/pi/play.sh",
     "desktop": [
       "config/desktop/Sudden-Strike-Resource-War.desktop"
+    ],
+    "setup_interface": 1,
+    "setup_options": [],
+    "play_options": [
+      {
+        "option": "--fps",
+        "help": "frame-rate counter"
+      },
+      {
+        "option": "--window",
+        "help": "Wine desktop window of the game's size"
+      },
+      {
+        "option": "--fit",
+        "help": "full screen keeping the game's 4:3 shape (side bars on 16:9)"
+      }
     ]
   }
 }

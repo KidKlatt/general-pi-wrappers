@@ -13,7 +13,7 @@
 #   --fps      show Mesa's frame-rate counter in the top left corner
 # The game's own resolution is sudtest.ini VideoMode: 1=640x480, 2=800x600, 3=1024x768 (all 4:3).
 set -u
-SS2_HOME="${SS2_HOME:-$HOME/ss2}"
+export SS2_HOME="${SS2_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$SS2_HOME" || exit 2
 GAME=ss2
 case "${1:-}" in

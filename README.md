@@ -11,11 +11,11 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 
 | Folder | Game | GOG product id(s) | Wrapper | Status |
 |---|---|---|---|---|
-| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.0.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
-| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.0.1 | playable, Phase 5 (standalone, full screen) |
-| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.0.1 | playable, Phase 4/5 (widescreen 1280x720) |
-| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.0.1 | playable, Phase 4/5 (split from Sudden Strike 2) |
-| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.9.1 | playable (setup.sh, widescreen) |
+| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.1.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
+| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.1.0 | playable, Phase 5 (standalone, full screen) |
+| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.1.0 | playable, Phase 4/5 (widescreen 1280x720) |
+| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.1.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
+| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.10.0 | playable (setup.sh, widescreen) |
 
 The machine-readable version of this table is [catalog.json](catalog.json), generated from each
 game's `game.json` by `python tools/build-catalog.py` (run `--check` before merging).
@@ -43,6 +43,53 @@ Each game folder is self-contained: copy it to a Pi and its scripts work from th
 by two games (for example the d3d9lazy shim used by Medieval and Shogun) is still copied into
 each game, because each game carries its own variant; promote it to a shared folder only once
 two games use the identical file.
+
+## Setup interface
+
+Every game whose `game.json` has `"entry_points": {"setup_interface": 1, ...}` follows this, so a
+tool (or a person) can set up any game the same way. `build-catalog.py --check` checks the parts
+it can, and `catalog.json` carries `setup_interface` per game. All games in this repository
+follow it.
+
+**`scripts/pi/setup.sh`**, run on the Pi as the normal user (sudo only for apt):
+
+| Option | Meaning |
+|---|---|
+| `--installer DIR` | Folder with the GOG installer files listed in `game.json` `files[]`. Needed until the game is unpacked. A build other than the tested one gives a warning, not a stop. |
+| `--home DIR` | Game home (default `~/<short_id>`; `<ID>_HOME` in the environment does the same). Everything the game needs lives here. |
+| `--allow-upgrades` | Continue even if apt would upgrade or remove installed packages (default: stop). |
+| `--no-desktop` | Do not install the shortcuts. |
+| `--jobs N` | Parallel build jobs (default 3). Accepted, and ignored, by games that build nothing. |
+| `--check` | Only the checks (device, OS, page size, disk, installer present and its checksum, apt simulation). Changes nothing; exits 0 with `READY:` or 3 with `NEEDS YOU:`. |
+| `-h`, `--help` | Usage. |
+
+A game may add its own options; it lists them in `entry_points.setup_options` (for example
+Medieval's `--private-wine`).
+
+- **Exit codes:** 0 done; 1 failed (run the same command again: finished steps are skipped);
+  2 usage error; 3 needs you: something only the user can fix (reboot for 4 KB pages, free disk,
+  wrong or missing installer, apt would change packages), printed as `NEEDS YOU: ...`.
+- **Progress:** one line per step, `==> [n/N] what it does`; the last line is `==> Done`. A log is
+  written to `<home>/logs/setup-<time>.log`.
+- **Resume:** each finished step leaves `<home>/.setup/<step>.done`; delete one to redo the step.
+- **Result:** on success `<home>/.setup/installed.json` holds `slug`, `short_id`,
+  `wrapper_version`, `home`, `installer` (file name), `installer_tested` (`yes`/`no`/`unknown`)
+  and `installed` (time). `game.json` is copied into the game home.
+- **Shortcuts:** the `.desktop` files in `config/desktop/` use `@GAME_HOME@` in `Exec=` and
+  `Icon=`; setup replaces it and installs them into `~/.local/share/applications` and, if it
+  exists, `~/Desktop`.
+- Nothing outside the game home changes except apt packages and the shortcuts.
+
+**`scripts/pi/play.sh`** starts the game; no options means full screen. It finds the game home
+from its own location (or `<ID>_HOME`), so a game set up with `--home` starts from its shortcut.
+
+| Option | Meaning |
+|---|---|
+| `--fps` | Frame-rate counter (where the game supports it). |
+| `--window` | In a window instead of full screen (where the game supports it). |
+
+Other options are listed in `entry_points.play_options`. Exit codes: 0 played; 1 this game is
+already running (it never refuses because a different game runs); 2 not set up, or usage error.
 
 ## Versioning
 

@@ -10,7 +10,7 @@
 # the screen mode is untouched for every other program; it ends when the game exits.
 # Needs no sudo. Refuses to start if Shogun already runs.
 set -u
-STW_HOME="${STW_HOME:-$HOME/stw}"
+export STW_HOME="${STW_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$STW_HOME" || exit 2
 FPS=0
 PROFILE=config/profile-final-pi4.env

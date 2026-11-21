@@ -2,7 +2,7 @@
 Type=Application
 Name=Medieval Total War (FPS counter)
 Comment=Start the game with a frame-rate counter
-Exec=/home/admin/mtw/scripts/pi/play.sh --fps
+Exec=@GAME_HOME@/scripts/pi/play.sh --fps
 Icon=applications-games
 Terminal=false
 Categories=Game;
