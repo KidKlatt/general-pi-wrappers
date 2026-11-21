@@ -58,7 +58,9 @@
   ],
   "notes": {
     "summary": "All three Civilization III games through Conquests, in widescreen, through Hangover with WowBox64 and Wine's Wayland driver.",
-    "known_issues": [],
+    "known_issues": [
+      "A sound bug makes a sound or the music loop (reported 2026-11-21; cause not found yet)."
+    ],
     "tips": [
       "A 2.0 GHz overclock gives about 7 % more in large late games."
     ]

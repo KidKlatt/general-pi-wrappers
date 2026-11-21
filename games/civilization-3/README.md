@@ -12,6 +12,9 @@ the game's own 15 FPS. Tested: main menu areas, Quick Start, a custom game (Larg
 several turns (about 4 s per early turn), saving and loading, a large late-game save. A Pi 5
 should be noticeably smoother (not tested yet).
 
+**Known issue:** a sound bug makes a sound or the music loop (reported 2026-11-21; cause not
+found yet).
+
 ## Setup
 
 Needs Raspberry Pi OS 64-bit based on Debian 13 "trixie" with the default desktop (labwc,

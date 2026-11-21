@@ -13,7 +13,7 @@
       "setup_interface": 1,
       "uninstall": true,
       "summary": "All three Civilization III games through Conquests, in widescreen, through Hangover with WowBox64 and Wine's Wayland driver.",
-      "known_issues": 0,
+      "known_issues": 1,
       "requirements": {
         "os": "Raspberry Pi OS 64-bit / Debian 13 trixie, 4 KB kernel pages",
         "disk_gb": 5,
