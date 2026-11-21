@@ -3,6 +3,15 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 builds it was tested against.
 
+## 1.0.1 — 2026-11-20
+
+Tested against GOG product `1443986935` (Sudden Strike 2, installer build `13718`). No change to
+the tested setup.
+
+- `play.sh` no longer refuses to start while another game's Wine runs (it exited with code 3);
+  it only refuses a second copy of Sudden Strike 2, told apart from Resource War by its Wine
+  prefix. `scripts/pi/busy-check.sh` is removed (a development-only check).
+
 ## 1.0.0 — 2026-11-20
 
 Tested against GOG product `1443986935` (Sudden Strike 2, installer build `13718`).

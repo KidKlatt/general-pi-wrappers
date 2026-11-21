@@ -52,7 +52,6 @@ yourself with `CIV3_MODE=1600x900 ~/civ3/scripts/pi/play.sh`. Smaller modes are 
 | `scripts/pi/setup.sh` | One-time setup (see above) |
 | `scripts/pi/play.sh [--x11]` | Starts the game; used by the shortcut |
 | `scripts/pi/with-mode.sh` | Switches the display mode for one command and always restores it |
-| `scripts/pi/busy-check.sh` | Refuses to start while another Wine game from these wrappers runs |
 | `config/track-hangover.env` | Hangover paths, the game's own prefix `~/civ3/prefixes/hangover` |
 | `config/pi4-civ3.env` | Game folder and executable |
 | `config/game/conquests.ini` | `KeepRes=1` (widescreen), `PlayIntro=0` (skips the intro video) |

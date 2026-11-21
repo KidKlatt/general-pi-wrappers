@@ -4,7 +4,7 @@
   "short_id": "ssrw",
   "title": "Sudden Strike: Resource War",
   "wrapper": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "status": "playable",
     "phase": "4/5 boundary (split from sudden-strike-2; human play test passed there; Gate 3 menu approval pending)",
     "updated": "2026-11-20",

@@ -4,7 +4,7 @@
   "short_id": "civ3",
   "title": "Sid Meier's Civilization III Complete",
   "wrapper": {
-    "version": "0.9.0",
+    "version": "0.9.1",
     "status": "playable",
     "phase": "4 done; setup.sh tested from a clean folder",
     "updated": "2026-11-20",

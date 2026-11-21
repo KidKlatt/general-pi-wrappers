@@ -8,7 +8,7 @@
 # winex11.so turns the game's 800x600 / 640x480 modes into Xwayland emulated modes, and Xwayland
 # scales the game to the whole screen (stretched to 16:9). Nothing in the registry changes, and
 # the screen mode is untouched for every other program; it ends when the game exits.
-# Needs no sudo. Refuses to start while another project's game (MTW, SS2) is running.
+# Needs no sudo. Refuses to start if Shogun already runs.
 set -u
 STW_HOME="${STW_HOME:-$HOME/stw}"
 cd "$STW_HOME" || exit 2
@@ -29,10 +29,6 @@ msg() { # message to the log and a desktop pop-up
   command -v zenity >/dev/null && DISPLAY="${DISPLAY:-:0}" zenity --warning --no-wrap --text="$1" 2>/dev/null &
 }
 
-if ! "$STW_HOME/scripts/pi/busy-check.sh" >>"$LOG" 2>&1; then
-  msg "Another game (Medieval: Total War or Sudden Strike) is running. Close it first."
-  exit 1
-fi
 if pgrep -x ShogunM.exe >/dev/null; then
   msg "Shogun: Total War is already running."
   exit 1

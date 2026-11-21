@@ -4,10 +4,10 @@
   "short_id": "stw",
   "title": "Shogun: Total War - Warlord Edition",
   "wrapper": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "status": "playable",
     "phase": "5 - Lock in and hand over (Gates 0-4 met; Gate 5 waits on the sound check)",
-    "updated": "2026-11-19",
+    "updated": "2026-11-20",
     "public_repo": null,
     "changelog": "CHANGELOG.md"
   },

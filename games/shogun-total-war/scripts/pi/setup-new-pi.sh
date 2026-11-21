@@ -123,7 +123,6 @@ if [ "$REPO" != "$STW" ]; then
 fi
 sed -i 's/\r$//' "$STW"/scripts/pi/*.sh "$STW"/config/*.env "$STW"/tools/*/*.py "$STW"/tools/*/*.sh 2>/dev/null || true
 chmod +x "$STW"/scripts/pi/*.sh "$STW"/tools/*/*.sh
-[ -d "$STW/baseline" ] || "$STW/scripts/pi/guard.sh" snapshot || echo "NOTE: guard snapshot failed (not needed to play)."
 echo "OK"
 
 # ---------------------------------------------------------------------------------------------
@@ -287,7 +286,6 @@ export WINEPREFIX WINEDEBUG=fixme-all
 if [ -f "$WINEPREFIX/system.reg" ]; then
   echo "Wine prefix already present: kept ($WINEPREFIX)."
 else
-  "$STW/scripts/pi/busy-check.sh" || die "another game's Wine is running; close it and rerun."
   echo "Creating the Wine prefix (a few minutes)..."
   WINEDLLOVERRIDES="mscoree=;mshtml=" $WINE_CMD wineboot -u || true
   $WINESERVER_CMD -w
