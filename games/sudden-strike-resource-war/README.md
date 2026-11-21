@@ -21,7 +21,6 @@ yet**, so a new Pi needs the steps below by hand. Tested GOG build and file hash
 | File | Purpose |
 |---|---|
 | `scripts/pi/play.sh [--fps] [--fit\|--window]` | Starts the game; used by the desktop shortcut |
-| `scripts/pi/busy-check.sh` | Refuses to start while another game's Wine runs on the Pi (`play.sh` exits 3) |
 | `scripts/pi/install-cnc-ddraw.sh` | Downloads cnc-ddraw 7.1.0.0 from its GitHub release (SHA-256 checked) and installs it into the game folder with `config/cnc-ddraw/ddraw.ini` |
 | `config/pi4-ssrw.env` | Device and game settings (game folder `game`, executable) |
 | `config/track-hangover.env` | Hangover paths, own prefix `~/ssrw/prefixes/hangover`, FEX back-end |

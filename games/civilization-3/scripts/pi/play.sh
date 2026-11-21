@@ -28,7 +28,6 @@ pick_mode() {
 if [ "${1:-}" != --inner ]; then
   LOG="$CIV3_HOME/logs/play-$(date +%Y%m%d-%H%M%S).log"
   if running; then echo "Civilization III is already running." | tee -a "$LOG"; exit 1; fi
-  "$CIV3_HOME/scripts/pi/busy-check.sh" >>"$LOG" 2>&1 || { echo "Another game is running." | tee -a "$LOG"; exit 3; }
   MODE="${CIV3_MODE:-$(pick_mode)}"
   [ -n "$MODE" ] || { echo "No display mode of at least 1024x768 found (wlr-randr); set CIV3_MODE." | tee -a "$LOG"; exit 2; }
   echo "play: display mode $MODE" >>"$LOG"

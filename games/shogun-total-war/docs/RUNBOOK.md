@@ -13,8 +13,8 @@ build time (checked 2026-11-18, see "Standalone check").
 | Logs | `~/stw/logs/play-*.log` |
 | Saves | `~/stw/game-lazy/savegames/*.cpg` |
 
-`play.sh` refuses to start while another project's Wine (MTW, SS2) runs, or if Shogun already
-runs. Full screen is Xwayland's mode emulation: the game's 800x600 / 640x480 screens are stretched
+`play.sh` refuses to start if Shogun already runs; other games may run at the same time (on a
+4 GB Pi both slow down). Full screen is Xwayland's mode emulation: the game's 800x600 / 640x480 screens are stretched
 to the 16:9 display; a 16:9 battle resolution chosen in the game (Options > Video) fills it
 without stretching. `--window` runs the game in an 800x600 Wine desktop window instead (the test
 harness's mode).
@@ -80,10 +80,9 @@ sudo apt-get remove gcc-x86-64-linux-gnu libc6-dev-amd64-cross libxi-dev libxine
   libxcursor-dev libxcomposite-dev cmake
 ```
 
-Do not run `apt autoremove` on the IIAB Pi (AGENTS.md rule 1); the automatic cross packages can
-be removed by name if wanted. Nothing else on the system was changed: no registry or file outside
-`~/stw` and the two shortcuts, no service, no CPU weight (the `user.slice` CPUWeight 1000 on this
-Pi was set by the MTW project; Shogun runs acceptably with it, see KNOWLEDGE.md).
+Avoid `apt autoremove` if the Pi does other jobs: it can remove packages other software still
+relies on. Remove the automatic cross packages by name if wanted. Nothing else on the system is
+changed: no registry or file outside `~/stw` and the two shortcuts, no service, no CPU weight.
 
 ## Standalone check
 
@@ -94,4 +93,4 @@ pid=$(pgrep -x ShogunM.exe); for p in $pid $(pgrep -f wineserver); do grep -h -E
 ```
 
 Both must print nothing. `grep -rn 'HOME/mtw\|/mtw/' ~/stw/config ~/stw/scripts` must find only
-comments and `busy-check.sh` (which only recognises MTW's running game).
+comments.

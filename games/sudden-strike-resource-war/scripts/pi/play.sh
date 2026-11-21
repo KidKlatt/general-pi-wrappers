@@ -25,8 +25,6 @@ for a in "$@"; do
     *) echo "usage: play.sh [--fps] [--fit|--window]"; exit 2 ;;
   esac
 done
-scripts/pi/busy-check.sh || exit 3
-
 set -a
 . "config/pi4-$GAME.env"
 . config/track-hangover.env
@@ -39,8 +37,17 @@ export WINEPREFIX WINEDEBUG="${WINEDEBUG:-fixme-all}"
 
 mkdir -p logs
 LOG="$SSRW_HOME/logs/play-$GAME-$(date +%Y%m%d-%H%M%S).log"
+# Sudden Strike 2 and Resource War both run game_exe.exe; started() looks for this game's own copy
+# (its Wine prefix), so one does not block the other. running() is any copy, for the wait at the end.
 running() { ps -eo comm | grep -q '^game_exe'; }
-if running; then echo "A Sudden Strike game is already running (this project or Sudden Strike 2)." | tee -a "$LOG"; exit 1; fi
+started() {
+  local p
+  for p in $(pgrep '^game_exe'); do
+    tr '\0' '\n' <"/proc/$p/environ" 2>/dev/null | grep -qxF "WINEPREFIX=$WINEPREFIX" && return 0
+  done
+  return 1
+}
+if started; then echo "Sudden Strike: Resource War is already running." | tee -a "$LOG"; exit 1; fi
 
 if [ "$MODE" = stretch ] && ! grep -q cnc-ddraw "$GAME_DIR/ddraw.ini" 2>/dev/null; then
   echo "cnc-ddraw not installed in $GAME_DIR, using --fit" | tee -a "$LOG"; MODE=fit

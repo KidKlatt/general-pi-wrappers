@@ -3,6 +3,14 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 0.9.1 — 2026-11-20
+
+Tested against GOG product `1471405734`, offline installer `setup_civilization3_complete_2.0.0.7.exe`
+(GOG version 2.0.0.7, SHA-256 `4ad54ca3…2395`). No change to the tested setup.
+
+- `play.sh` no longer refuses to start while another game's Wine runs; it only refuses a second
+  copy of Civilization III. `scripts/pi/busy-check.sh` is removed (a development-only check).
+
 ## 0.9.0 — 2026-11-20
 
 Tested against GOG product `1471405734`, offline installer `setup_civilization3_complete_2.0.0.7.exe`

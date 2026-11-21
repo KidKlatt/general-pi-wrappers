@@ -24,7 +24,6 @@ Tested GOG build and file hash are in [game.json](game.json).
 |---|---|
 | `scripts/pi/setup-new-pi.sh` | Whole setup on a new Pi: apt packages (simulated first), Box64 from source, Kron4ek Wine 9.17, own `dsound.dll` and `winex11.so` from the Wine source, patched Mesa, game from your installer, shim, prefix, shortcuts |
 | `scripts/pi/play.sh` | Launcher: full screen (default), `--fps` counter, `--window` (800x600 Wine desktop) |
-| `scripts/pi/busy-check.sh`, `guard.sh` | Refuse to start while another game's Wine runs; record the system state before setup |
 | `config/desktop/*.desktop` | Desktop shortcuts (normal and with FPS counter); the icon is made from the game's own icon during setup |
 | `config/track-box64.env` | Box64 + Wine 9.17 paths, own prefix `~/stw/prefixes/box64`, own caches |
 | `config/pi4-stw-lazy.env` | Device settings for the game copy `~/stw/game-lazy` that holds the custom DLLs |

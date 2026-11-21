@@ -4,7 +4,7 @@
   "short_id": "ss2",
   "title": "Sudden Strike 2",
   "wrapper": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "status": "playable",
     "phase": "4/5 boundary (human play test passed; Gate 3 menu approval pending)",
     "updated": "2026-11-20",

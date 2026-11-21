@@ -3,6 +3,19 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.0.1 — 2026-11-20
+
+Tested against GOG product `1874325037`, offline installer build `86790` (gog_build_id `59191766611906857`).
+No change to the tested setup: the game, its build and its settings are the same as 1.0.0.
+
+- Removed `scripts/pi/guard.sh` and the baseline snapshot step in `setup-new-pi.sh`. It is a
+  development tool that protects the development Pi's other services, not something a player needs.
+- `play.sh` no longer refuses to start while another game's Wine runs; it only refuses a second
+  copy of Shogun. `scripts/pi/busy-check.sh` is removed (a development-only check), and so is
+  its use in `setup-new-pi.sh` before the Wine prefix is created.
+- `docs/RUNBOOK.md`: notes written for players instead of the development workflow (no
+  references to the development Pi's rules or internal notes).
+
 ## 1.0.0 — 2026-11-19
 
 Tested against GOG product `1874325037`, offline installer build `86790` (gog_build_id `59191766611906857`).
