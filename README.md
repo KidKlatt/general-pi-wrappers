@@ -13,8 +13,8 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 |---|---|---|---|---|
 | [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.1.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
 | [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.1.0 | playable, Phase 5 (standalone, full screen) |
-| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.0.1 | playable, Phase 4/5 (widescreen 1280x720) |
-| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.0.1 | playable, Phase 4/5 (split from Sudden Strike 2) |
+| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.1.0 | playable, Phase 4/5 (widescreen 1280x720) |
+| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.1.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
 | [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.10.0 | playable (setup.sh, widescreen) |
 
 The machine-readable version of this table is [catalog.json](catalog.json), generated from each
@@ -48,8 +48,8 @@ two games use the identical file.
 
 Every game whose `game.json` has `"entry_points": {"setup_interface": 1, ...}` follows this, so a
 tool (or a person) can set up any game the same way. `build-catalog.py --check` checks the parts
-it can, and `catalog.json` carries `setup_interface` per game. Sudden Strike 2 and Resource War
-have no setup script yet (manual guide in their `docs/`).
+it can, and `catalog.json` carries `setup_interface` per game. All games in this repository
+follow it.
 
 **`scripts/pi/setup.sh`**, run on the Pi as the normal user (sudo only for apt):
 

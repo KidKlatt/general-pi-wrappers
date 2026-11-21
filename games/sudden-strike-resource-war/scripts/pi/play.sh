@@ -14,7 +14,7 @@
 #   --fps      show Mesa's frame-rate counter in the top left corner
 # The game's own resolution is sudtest.ini VideoMode: 1=640x480, 2=800x600, 3=1024x768 (all 4:3).
 set -u
-SSRW_HOME="${SSRW_HOME:-$HOME/ssrw}"
+export SSRW_HOME="${SSRW_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$SSRW_HOME" || exit 2
 GAME=ssrw
 [ "${1:-}" = rw ] && shift

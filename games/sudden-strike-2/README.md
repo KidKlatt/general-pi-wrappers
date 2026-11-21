@@ -11,14 +11,40 @@ Measured on a Pi 4 (4 GB): about 60 FPS in a mission (59.7 average / 51.7 minimu
 **Sudden Strike: Resource War** used to be in this folder. Since wrapper 1.0.0 it has its own:
 [games/sudden-strike-resource-war](../sudden-strike-resource-war/).
 
-## Status: wrapper 1.0.0, no new-Pi setup script yet
+## Setup
 
-These files reproduce the working setup on the Pi it was made on. There is **no setup script
-yet**, so a new Pi needs the steps below by hand. Tested GOG build and file hashes are in
+On the Pi (64-bit Raspberry Pi OS / Debian 13 "trixie"), from a copy of this folder, with your
+GOG offline installer `setup_sudden_strike_2_2.2_(13718).exe` in a folder such as `~/gog`:
+
+```sh
+scripts/pi/setup.sh --installer ~/gog
+```
+
+It installs `innoextract`, `unzip` and `curl` if missing, and Hangover 11.16 with its FEX
+back-end (`hangover-wine`, `hangover-libwow64fex`) from the official release if they are not
+installed (apt is simulated first; it stops if any installed package would be upgraded or
+removed, unless you add `--allow-upgrades`). It then sets the game up in `~/ss2` (`--home DIR`
+for another place): extracts the installer (keeping a hard-linked clean copy
+`game-ss2.pristine`), applies GOG's `winmm_override` music files, sets 800x600, installs
+cnc-ddraw, creates the Wine prefix and adds a **Sudden Strike 2** shortcut (app menu, and the
+desktop if `~/Desktop` exists; `--no-desktop` skips it). A second run resumes where it stopped.
+`--check` runs only the checks and changes nothing; exit code 3 means it stopped on something
+you have to fix (the message starts with `NEEDS YOU:`). Tested GOG build and file hashes are in
 [game.json](game.json).
+
+**Do not switch to Hangover's default WowBox64 back-end:** saving hangs forever under it.
+
+### Widescreen (optional)
+
+The 60 FPS figure above is at a true 1280x720 with St1cky's SS2 Multi Resolution Patcher, a
+closed-source community tool that is not included and not run by the setup. If you have it, run
+it on copies inside `scripts/pi/sandbox.sh`, put its output in `~/ss2/widescreen/1280x720/` and
+run `scripts/pi/apply-widescreen.sh install` (again after any later `install-cnc-ddraw.sh`).
+Without it the game runs at 800x600 stretched to the screen.
 
 | File | Purpose |
 |---|---|
+| `scripts/pi/setup.sh` | Whole setup (see above) |
 | `scripts/pi/play.sh [--fps] [--fit\|--window]` | Starts the game; used by the desktop shortcut |
 | `scripts/pi/install-cnc-ddraw.sh` | Downloads cnc-ddraw 7.1.0.0 from its GitHub release (SHA-256 checked) and installs it into the game folder with `config/cnc-ddraw/ddraw.ini` |
 | `scripts/pi/apply-widescreen.sh install\|remove` | Switches the game to the patched 1280x720 files |
@@ -26,21 +52,8 @@ yet**, so a new Pi needs the steps below by hand. Tested GOG build and file hash
 | `config/pi4-ss2.env` | Device and game settings (game folder, executable) |
 | `config/track-hangover.env` | Hangover paths, own prefix `~/ss2/prefixes/hangover`, FEX back-end |
 | `config/profile-play.env` | Profile used by `play.sh` |
-| `config/desktop/Sudden-Strike-2.desktop` | Desktop shortcut (points at `/home/admin/ss2`; change the path for another user) |
+| `config/desktop/Sudden-Strike-2.desktop` | Shortcut template (`@GAME_HOME@` is filled in by the setup) |
 | `docs/game-files-pi4.md` | How the installer is extracted with `innoextract`, and the GOG `winmm_override` step |
-
-## Manual setup outline
-
-1. Hangover 11.16 installed system-wide **including the `hangover-libwow64fex` package**.
-   Medieval: Total War's [setup.sh](../medieval-total-war/scripts/pi/setup.sh)
-   installs Hangover but not that FEX package (it ships in the same Hangover release tarball).
-2. Copy this folder to `~/ss2`, put the installer in `~/ss2/installer/`, extract it and apply
-   the `winmm_override` files as in [docs/game-files-pi4.md](docs/game-files-pi4.md).
-3. `scripts/pi/install-cnc-ddraw.sh`, then optionally the widescreen step (run
-   `apply-widescreen.sh install` again after any later `install-cnc-ddraw.sh`).
-4. Copy the `.desktop` file to `~/Desktop`.
-
-**Do not switch to Hangover's default WowBox64 back-end:** saving hangs forever under it.
 
 ## Upgrading from 0.9.0
 

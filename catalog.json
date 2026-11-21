@@ -57,9 +57,9 @@
       "short_id": "ss2",
       "title": "Sudden Strike 2",
       "path": "games/sudden-strike-2",
-      "wrapper_version": "1.0.1",
+      "wrapper_version": "1.1.0",
       "status": "playable",
-      "setup_interface": null,
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1443986935",
@@ -74,9 +74,9 @@
       "short_id": "ssrw",
       "title": "Sudden Strike: Resource War",
       "path": "games/sudden-strike-resource-war",
-      "wrapper_version": "1.0.1",
+      "wrapper_version": "1.1.0",
       "status": "playable",
-      "setup_interface": null,
+      "setup_interface": 1,
       "products": [
         {
           "product_id": "1707288232",

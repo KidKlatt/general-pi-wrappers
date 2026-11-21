@@ -2,7 +2,7 @@
 Type=Application
 Name=Sudden Strike Resource War
 Comment=Start the game (Hangover Wine)
-Exec=/home/admin/ssrw/scripts/pi/play.sh
+Exec=@GAME_HOME@/scripts/pi/play.sh
 Icon=applications-games
 Terminal=false
 Categories=Game;
