@@ -2,7 +2,7 @@
 Type=Application
 Name=Shogun Total War
 Comment=Start the game full screen (Box64 + own Wine 9.17, d3d9lazy shim)
-Exec=/home/admin/stw/scripts/pi/play.sh
-Icon=/home/admin/stw/config/desktop/shogun.png
+Exec=@GAME_HOME@/scripts/pi/play.sh
+Icon=@GAME_HOME@/config/desktop/shogun.png
 Terminal=false
 Categories=Game;

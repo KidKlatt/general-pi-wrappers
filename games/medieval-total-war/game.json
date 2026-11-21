@@ -4,10 +4,10 @@
   "short_id": "mtw",
   "title": "Medieval: Total War",
   "wrapper": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "status": "released",
     "phase": "4 - Refinement (Gate 4 open; public setup script shipped)",
-    "updated": "2026-11-16",
+    "updated": "2026-11-20",
     "public_repo": "https://github.com/KidKlatt/TWM_Pi",
     "changelog": "CHANGELOG.md"
   },
@@ -53,18 +53,57 @@
     "graphics": "WineD3D -> OpenGL on V3D, WINE_D3D_CONFIG=VideoMemorySize=512",
     "mesa": "Private Mesa 26.2.6 build with patches/mesa-v3d-busy-range.patch in ~/mtw/mesa-patched",
     "own_components": [
-      { "name": "d3d9lazy", "kind": "d3d9.dll shim", "source": "tools/d3d9lazy/d3d9lazy.c", "version": "v10" },
-      { "name": "mesa-v3d-busy-range", "kind": "mesa patch", "source": "patches/mesa-v3d-busy-range.patch" }
+      {
+        "name": "d3d9lazy",
+        "kind": "d3d9.dll shim",
+        "source": "tools/d3d9lazy/d3d9lazy.c",
+        "version": "v10"
+      },
+      {
+        "name": "mesa-v3d-busy-range",
+        "kind": "mesa patch",
+        "source": "patches/mesa-v3d-busy-range.patch"
+      }
     ]
   },
   "depends_on": [],
   "provides": [
-    { "path": "~/mtw/mesa-patched", "used_by": ["shogun-total-war"] },
-    { "path": "~/mtw/box64, ~/mtw/wine-x64-9.17", "used_by": ["shogun-total-war"] }
+    {
+      "path": "~/mtw/mesa-patched",
+      "used_by": [
+        "shogun-total-war"
+      ]
+    },
+    {
+      "path": "~/mtw/box64, ~/mtw/wine-x64-9.17",
+      "used_by": [
+        "shogun-total-war"
+      ]
+    }
   ],
   "entry_points": {
-    "setup": "scripts/pi/setup-new-pi.sh",
+    "setup": "scripts/pi/setup.sh",
     "play": "scripts/pi/play.sh",
-    "desktop": ["config/desktop/Medieval-Total-War.desktop", "config/desktop/Medieval-Total-War-FPS.desktop"]
+    "desktop": [
+      "config/desktop/Medieval-Total-War.desktop",
+      "config/desktop/Medieval-Total-War-FPS.desktop"
+    ],
+    "setup_interface": 1,
+    "setup_options": [
+      {
+        "option": "--private-wine",
+        "help": "unpack Hangover into the game home instead of installing it as the system Wine (use if the Pi already has a Wine)"
+      }
+    ],
+    "play_options": [
+      {
+        "option": "--fps",
+        "help": "frame-rate counter"
+      },
+      {
+        "option": "--window",
+        "help": "1024x768 Wine desktop window"
+      }
+    ]
   }
 }

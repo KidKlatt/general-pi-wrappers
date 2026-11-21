@@ -2,7 +2,7 @@
 Type=Application
 Name=Civilization III
 Comment=Start Civilization III Complete (Hangover Wine, widescreen)
-Exec=/home/admin/civ3/scripts/pi/play.sh
+Exec=@GAME_HOME@/scripts/pi/play.sh
 Icon=applications-games
 Terminal=false
 Categories=Game;

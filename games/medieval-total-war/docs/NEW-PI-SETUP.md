@@ -1,7 +1,7 @@
 # Setting up Medieval: Total War on a new Raspberry Pi
 
 This repeats the working Pi 4 setup on another Pi with one script,
-[`scripts/pi/setup-new-pi.sh`](../scripts/pi/setup-new-pi.sh). The result is the same as the
+[`scripts/pi/setup.sh`](../scripts/pi/setup.sh). The result is the same as the
 working Pi: Hangover 11.16 (Wine with the WowBox64 x86 emulator), the project's d3d9lazy shim,
 a private patched Mesa driver, and the full-screen launcher `play.sh` with desktop shortcuts.
 
@@ -99,6 +99,12 @@ bash ~/pi-total-war/scripts/pi/setup-new-pi.sh --installer ~/gog
 ```
 
 If the SSH session drops, log in again and reattach with `tmux attach -t setup`.
+
+In this folder the script is `scripts/pi/setup.sh` (`setup-new-pi.sh` forwards to it). Options:
+`--home DIR` (default `~/mtw`), `--no-desktop`, `--jobs N`, `--allow-upgrades`, `--private-wine`,
+and `--check`, which runs only the checks and changes nothing. Exit code 3 means it stopped on
+something you have to fix (the message starts with `NEEDS YOU:`); fix it and run the same command
+again.
 
 What it does, in order (each step is skipped on a rerun once it has finished):
 

@@ -9,34 +9,45 @@
 #   --home DIR        where the game is set up (default ~/civ3)
 #   --allow-upgrades  continue even if apt wants to upgrade or remove installed packages
 #                     (default: stop, so a Pi that also runs a server is not changed by surprise)
-#   --no-desktop      do not install the desktop shortcut
+#   --no-desktop      do not install the shortcuts (desktop and app menu)
+#   --jobs N          accepted for the standard interface; nothing is built for this game
+#   --check           only check this Pi and the installer, change nothing
 #
+# Standard wrapper interface (general-pi-wrappers README, "Setup interface"). Exit codes:
+# 0 done, 1 failed (run again to resume), 2 usage error, 3 needs you (fix what it says, rerun).
 # Steps: checks; apt packages (innoextract, wlr-randr; Hangover 11.16 from its official release if
 # missing); copies the scripts and config into the game home; extracts the installer; applies the
 # files GOG's installer drops into place (__support/save); writes conquests.ini; creates the Wine
-# prefix with the game's registry keys; installs the desktop shortcut. Each step leaves a marker in
+# prefix with the game's registry keys; installs the shortcuts. Each step leaves a marker in
 # <home>/.setup/, so a second run resumes; delete a marker to redo a step. Uses sudo only for apt.
-# Nothing outside the game home is changed except apt packages and the shortcut.
+# Nothing outside the game home is changed except apt packages and the shortcuts.
 set -euo pipefail
 
-INSTALLER_DIR=""; CIV3_HOME="$HOME/civ3"; ALLOW_UPGRADES=0; DESKTOP=1
+INSTALLER_DIR=""; GAME_HOME="${CIV3_HOME:-$HOME/civ3}"; ALLOW_UPGRADES=0; DESKTOP=1; JOBS=3; CHECK=0
+usage() { echo "$1" >&2; echo "usage: setup.sh [--installer DIR] [--home DIR] [--allow-upgrades] [--no-desktop] [--jobs N] [--check]" >&2; exit 2; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    --installer) INSTALLER_DIR="$2"; shift 2 ;;
-    --home) CIV3_HOME="$2"; shift 2 ;;
+    --installer) [ $# -ge 2 ] || usage "--installer needs a folder"; INSTALLER_DIR="$2"; shift 2 ;;
+    --home) [ $# -ge 2 ] || usage "--home needs a folder"; GAME_HOME="$2"; shift 2 ;;
     --allow-upgrades) ALLOW_UPGRADES=1; shift ;;
     --no-desktop) DESKTOP=0; shift ;;
-    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
-    *) echo "unknown option: $1" >&2; exit 2 ;;
+    --jobs) [ $# -ge 2 ] || usage "--jobs needs a number"; JOBS="$2"; shift 2 ;;
+    --check) CHECK=1; shift ;;
+    -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
+    *) usage "unknown option: $1" ;;
   esac
 done
+case "$JOBS" in ''|*[!0-9]*) usage "--jobs needs a number" ;; esac
 
 SRC="$(cd "$(dirname "$0")/../.." && pwd)"
-CIV3_HOME="$(mkdir -p "$CIV3_HOME" && cd "$CIV3_HOME" && pwd)"
+case "$GAME_HOME" in /*) ;; *) GAME_HOME="$PWD/$GAME_HOME" ;; esac
+CIV3_HOME="$GAME_HOME"; export CIV3_HOME
 MARK="$CIV3_HOME/.setup"
-mkdir -p "$MARK" "$CIV3_HOME/logs" "$CIV3_HOME/downloads" "$CIV3_HOME/prefixes"
-LOG="$CIV3_HOME/logs/setup-$(date +%Y%m%d-%H%M%S).log"
-exec > >(tee -a "$LOG") 2>&1
+if [ "$CHECK" = 0 ]; then
+  mkdir -p "$MARK" "$CIV3_HOME/logs" "$CIV3_HOME/downloads" "$CIV3_HOME/prefixes"
+  LOG="$CIV3_HOME/logs/setup-$(date +%Y%m%d-%H%M%S).log"
+  exec > >(tee -a "$LOG") 2>&1
+fi
 
 # Pinned: what the working Pi uses. Hangover checksum from its official release page.
 HANGOVER_VER=11.16
@@ -45,39 +56,89 @@ HANGOVER_URL="https://github.com/AndreRH/hangover/releases/download/hangover-${H
 HANGOVER_SHA=b5493f5903ab3c05f78bf4c03b06ac0005eb26f732437748c1592fefa45e861a
 # GOG offline installer tested (2.0.0.7). Another build may work; the script only warns.
 GOG_SHA=4ad54ca308ea93af49b0db3a795736eda91aed61c8cd73b18196802d0f4d2395
+APT_PKGS=(innoextract wlr-randr)
 
-say()   { echo; echo "=== $*"; }
-die()   { echo "ERROR: $*" >&2; exit 1; }
+STEPS=7; STEP=0
+step()  { STEP=$((STEP+1)); printf '\n==> [%d/%d] %s\n' "$STEP" "$STEPS" "$*"; }
+die()   { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
+needs() { printf '\nNEEDS YOU: %s\n' "$*" >&2; exit 3; }
 done_() { [ -f "$MARK/$1.done" ]; }
 mark()  { touch "$MARK/$1.done"; }
+existing_dir() { local d="$1"; while [ ! -d "$d" ]; do d="$(dirname "$d")"; done; echo "$d"; }
 
 # apt with a dry run first: stop if anything installed would be upgraded or removed.
-apt_install() {
+apt_sim() {
   local sim
-  sim=$(sudo apt-get -s install --no-install-recommends "$@") || die "apt-get -s install $* failed"
+  sim=$(apt-get -s install --no-install-recommends "$@" 2>/dev/null) || die "apt-get -s install $* failed"
   if echo "$sim" | grep -qE '^(Remv|Inst [^ ]+ \[)'; then
     echo "$sim" | grep -E '^(Remv|Inst [^ ]+ \[)'
-    [ "$ALLOW_UPGRADES" = 1 ] || die "apt would upgrade or remove the packages above. Check them, then rerun with --allow-upgrades if that is fine."
+    [ "$ALLOW_UPGRADES" = 1 ] || needs "apt would upgrade or remove the packages above. Check them, then rerun with --allow-upgrades if that is fine."
   fi
-  sudo apt-get install -y --no-install-recommends "$@"
+}
+apt_install() { apt_sim "$@"; sudo apt-get install -y --no-install-recommends "$@"; }
+
+# Records which installer was used and whether it is the tested build (read by installed.json).
+hash_installer() {
+  if [ "$(sha256sum "$INSTALLER" | cut -d' ' -f1)" = "$GOG_SHA" ]; then T=yes; else T=no
+    echo "NOTE: this installer is not the tested build 2.0.0.7 (SHA-256 differs); continuing."
+  fi
+  [ "$CHECK" = 1 ] || printf '%s %s\n' "$(basename "$INSTALLER")" "$T" > "$MARK/installer.txt"
+  echo "installer: $INSTALLER (tested build: $T)"
 }
 
-say "1/7 Checks"
-[ "$(uname -m)" = aarch64 ] || die "needs 64-bit Raspberry Pi OS (aarch64); this is $(uname -m)."
-. /etc/os-release
-[ "${VERSION_CODENAME:-}" = trixie ] || die "needs Raspberry Pi OS / Debian 13 'trixie' (Hangover's package is built for it); this is ${PRETTY_NAME:-unknown}."
-[ "$(getconf PAGESIZE)" = 4096 ] || die "the kernel uses $(getconf PAGESIZE)-byte pages; Hangover needs 4 KB pages. On a Pi 5 add 'kernel=kernel8.img' to /boot/firmware/config.txt and reboot."
-[ -n "$INSTALLER_DIR" ] || die "give the folder with your GOG installer: --installer DIR"
-INSTALLER=$(ls "$INSTALLER_DIR"/setup_civilization3_complete_*.exe 2>/dev/null | head -1)
-[ -n "$INSTALLER" ] || die "no setup_civilization3_complete_*.exe in $INSTALLER_DIR"
-FREE=$(df -Pk "$CIV3_HOME" | awk 'NR==2{print $4}')
-[ "$FREE" -gt 5000000 ] || done_ extract || die "needs about 5 GB free in $CIV3_HOME (game 1.8 GB, Wine prefix 2.3 GB)"
-echo "installer: $INSTALLER"; echo "game home: $CIV3_HOME"
+write_installed() {
+  python3 -I - "$CIV3_HOME/game.json" "$MARK/installer.txt" "$MARK/installed.json" "$CIV3_HOME" <<'PY'
+import datetime, json, os, sys
+g = json.load(open(sys.argv[1]))
+name, tested = (open(sys.argv[2]).read().split() + ["", "unknown"])[:2] if os.path.exists(sys.argv[2]) else ("", "unknown")
+json.dump({"slug": g["slug"], "short_id": g["short_id"], "wrapper_version": g["wrapper"]["version"],
+           "home": sys.argv[4], "installer": name, "installer_tested": tested,
+           "installed": datetime.datetime.now().isoformat(timespec="seconds")},
+          open(sys.argv[3], "w"), indent=2)
+PY
+  echo "recorded: $MARK/installed.json"
+}
 
-say "2/7 Packages"
+install_shortcuts() {
+  [ "$DESKTOP" = 1 ] || { echo "skipped (--no-desktop)"; return 0; }
+  local t f targets=("$HOME/.local/share/applications")
+  [ -d "$HOME/Desktop" ] && targets+=("$HOME/Desktop")
+  for t in "${targets[@]}"; do
+    mkdir -p "$t"
+    for f in "$CIV3_HOME"/config/desktop/*.desktop; do
+      sed "s#@GAME_HOME@#$CIV3_HOME#g" "$f" > "$t/$(basename "$f")"
+      chmod +x "$t/$(basename "$f")"
+    done
+  done
+  echo "shortcuts in: ${targets[*]}"
+}
+
+step "Checks"
+[ "$(uname -m)" = aarch64 ] || needs "needs 64-bit Raspberry Pi OS (aarch64); this is $(uname -m)."
+. /etc/os-release
+[ "${VERSION_CODENAME:-}" = trixie ] || needs "needs Raspberry Pi OS / Debian 13 'trixie' (Hangover's package is built for it); this is ${PRETTY_NAME:-unknown}."
+[ "$(getconf PAGESIZE)" = 4096 ] || needs "the kernel uses $(getconf PAGESIZE)-byte pages; Hangover needs 4 KB pages. On a Pi 5 add 'kernel=kernel8.img' to /boot/firmware/config.txt and reboot."
+INSTALLER=""
+if ! done_ extract; then
+  [ -n "$INSTALLER_DIR" ] || needs "give the folder with your GOG installer: --installer DIR"
+  INSTALLER=$(ls "$INSTALLER_DIR"/setup_civilization3_complete_*.exe 2>/dev/null | head -1)
+  [ -n "$INSTALLER" ] || needs "no setup_civilization3_complete_*.exe in $INSTALLER_DIR"
+fi
+FREE=$(df -Pk "$(existing_dir "$CIV3_HOME")" | awk 'NR==2{print $4}')
+[ "$FREE" -gt 5000000 ] || done_ extract || needs "needs about 5 GB free in $CIV3_HOME (game 1.8 GB, Wine prefix 2.3 GB)"
+echo "game home: $CIV3_HOME"
+if [ "$CHECK" = 1 ]; then
+  need=(); for p in "${APT_PKGS[@]}"; do dpkg -s "$p" >/dev/null 2>&1 || need+=("$p"); done
+  if [ ${#need[@]} -gt 0 ]; then echo "apt will install: ${need[*]}"; apt_sim "${need[@]}"; fi
+  dpkg -s hangover-wine >/dev/null 2>&1 || echo "Hangover $HANGOVER_VER will be downloaded and installed (apt)."
+  [ -z "$INSTALLER" ] || hash_installer
+  printf '\nREADY: this Pi can run the setup.\n'; exit 0
+fi
+
+step "Packages"
 if ! done_ packages; then
   need=()
-  for p in innoextract wlr-randr; do dpkg -s "$p" >/dev/null 2>&1 || need+=("$p"); done
+  for p in "${APT_PKGS[@]}"; do dpkg -s "$p" >/dev/null 2>&1 || need+=("$p"); done
   if [ ${#need[@]} -gt 0 ]; then apt_install "${need[@]}"; else echo "innoextract and wlr-randr are installed."; fi
   if dpkg -s hangover-wine >/dev/null 2>&1 && dpkg -s hangover-wowbox64 >/dev/null 2>&1; then
     echo "Hangover: $(dpkg-query -W -f='${Version}' hangover-wine) with WowBox64 is installed."
@@ -97,20 +158,19 @@ if ! done_ packages; then
   mark packages
 fi
 
-say "3/7 Scripts and config into $CIV3_HOME"
+step "Scripts and config into $CIV3_HOME"
 if [ "$SRC" != "$CIV3_HOME" ]; then
   mkdir -p "$CIV3_HOME/scripts/pi" "$CIV3_HOME/config"
   cp -f "$SRC"/scripts/pi/*.sh "$CIV3_HOME/scripts/pi/"
   cp -rf "$SRC"/config/. "$CIV3_HOME/config/"
+  cp -f "$SRC/game.json" "$CIV3_HOME/game.json"
 fi
 chmod +x "$CIV3_HOME"/scripts/pi/*.sh
 echo "done"
 
-say "4/7 Extracting the game (about 2-3 minutes)"
+step "Extracting the game (about 2-3 minutes)"
 if ! done_ extract; then
-  if [ "$(sha256sum "$INSTALLER" | cut -d' ' -f1)" != "$GOG_SHA" ]; then
-    echo "NOTE: this installer is not the tested build 2.0.0.7 (SHA-256 differs); continuing."
-  fi
+  hash_installer
   rm -rf "$CIV3_HOME/game.x" "$CIV3_HOME/game"
   innoextract --gog --progress=0 -d "$CIV3_HOME/game.x" "$INSTALLER"
   mv "$CIV3_HOME/game.x/app" "$CIV3_HOME/game"
@@ -120,7 +180,7 @@ if ! done_ extract; then
 fi
 echo "game in $CIV3_HOME/game"
 
-say "5/7 GOG support files and conquests.ini"
+step "GOG support files and conquests.ini"
 G="$CIV3_HOME/game"
 # GOG's installer copies __support/save over the game (Lucida Sans font, Conquests rules files).
 (cd "$G/__support/save" && find . -type f) | while read -r f; do
@@ -139,8 +199,7 @@ else
 fi
 echo "done"
 
-say "6/7 Wine prefix and registry keys"
-export CIV3_HOME
+step "Wine prefix and registry keys"
 set -a; . "$CIV3_HOME/config/track-hangover.env"; set +a
 export WINEPREFIX="$CIV3_HOME/prefixes/hangover" HODLL=wowbox64.dll WINEDEBUG=-all WINEDLLOVERRIDES="mscoree=;mshtml="
 if ! done_ prefix; then
@@ -154,17 +213,9 @@ $WINE_CMD reg add 'HKLM\SOFTWARE\Infogrames\Civ3PTW' /v Install_Path /t REG_SZ /
 $WINE_CMD reg add 'HKCU\Software\Wine\WineDbg' /v ShowCrashDialog /t REG_DWORD /d 0 /f
 $WINESERVER_CMD -w
 
-say "7/7 Desktop shortcut"
-if [ "$DESKTOP" = 1 ]; then
-  D="$HOME/Desktop/Civilization-III.desktop"
-  mkdir -p "$HOME/Desktop" "$HOME/.local/share/applications"
-  sed "s#^Exec=.*#Exec=env CIV3_HOME=$CIV3_HOME $CIV3_HOME/scripts/pi/play.sh#" \
-      "$CIV3_HOME/config/desktop/Civilization-III.desktop" > "$D"
-  chmod +x "$D"
-  cp "$D" "$HOME/.local/share/applications/"
-  echo "shortcut: $D (and the Games menu)"
-else
-  echo "skipped (--no-desktop)"
-fi
+step "Shortcuts"
+install_shortcuts
+write_installed
 
-say "Done. Start the game with the 'Civilization III' shortcut or: $CIV3_HOME/scripts/pi/play.sh"
+printf '\n==> Done\n'
+echo "Start the game with the 'Civilization III' shortcut or: $CIV3_HOME/scripts/pi/play.sh"

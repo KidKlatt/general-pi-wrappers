@@ -29,8 +29,10 @@ official release if it is not installed (apt is simulated first; it stops if any
 would be upgraded or removed, unless you add `--allow-upgrades`). It then sets the game up in
 `~/civ3` (`--home DIR` for another place): extracts the installer, places the files GOG's own
 installer adds, writes `conquests.ini`, creates the Wine prefix with the game's registry keys and
-adds a **Civilization III** desktop shortcut. A second run resumes where it stopped. sudo is used
-only for apt.
+adds a **Civilization III** shortcut (app menu, and the desktop if `~/Desktop` exists;
+`--no-desktop` skips it). A second run resumes where it stopped. sudo is used only for apt.
+`--check` runs only the checks and changes nothing; exit code 3 means it stopped on something you
+have to fix (the message starts with `NEEDS YOU:`).
 
 On a Pi 5, Hangover needs the 4 KB-page kernel: add `kernel=kernel8.img` to
 `/boot/firmware/config.txt` and reboot first (setup.sh checks this).

@@ -5,6 +5,19 @@
   "description": "One file per game folder. Says which GOG products and installer builds the wrapper was made and tested against, and which version of the wrapper this is. Read by tools/build-catalog.py and, later, by the entry tool that matches a user's GOG library.",
   "type": "object",
   "required": ["schema_version", "slug", "short_id", "title", "wrapper", "gog_products"],
+  "$defs": {
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["option", "help"],
+        "properties": {
+          "option": { "type": "string", "pattern": "^--[a-z0-9-]+$" },
+          "help": { "type": "string" }
+        }
+      }
+    }
+  },
   "properties": {
     "schema_version": { "const": 1 },
     "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Must equal the folder name under games/." },
@@ -68,9 +81,12 @@
     "entry_points": {
       "type": "object",
       "properties": {
-        "setup": { "type": ["string", "null"] },
+        "setup": { "type": ["string", "null"], "description": "scripts/pi/setup.sh when setup_interface is set" },
+        "setup_interface": { "type": "integer", "enum": [1], "description": "The setup follows the standard interface (README, \"Setup interface\"), version 1. Absent: it does not (yet)." },
+        "setup_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard ones." },
         "play": { "type": ["string", "null"] },
-        "desktop": { "type": "array", "items": { "type": "string" } }
+        "play_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard --fps and --window." },
+        "desktop": { "type": "array", "items": { "type": "string" }, "description": "Shortcut templates; Exec/Icon paths use @GAME_HOME@." }
       }
     }
   }

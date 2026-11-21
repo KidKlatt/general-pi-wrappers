@@ -4,7 +4,7 @@
   "short_id": "civ3",
   "title": "Sid Meier's Civilization III Complete",
   "wrapper": {
-    "version": "0.9.1",
+    "version": "0.10.0",
     "status": "playable",
     "phase": "4 done; setup.sh tested from a clean folder",
     "updated": "2026-11-20",
@@ -64,6 +64,14 @@
     "play": "scripts/pi/play.sh",
     "desktop": [
       "config/desktop/Civilization-III.desktop"
+    ],
+    "setup_interface": 1,
+    "setup_options": [],
+    "play_options": [
+      {
+        "option": "--x11",
+        "help": "run through Xwayland instead of Wine's Wayland driver (slower)"
+      }
     ]
   }
 }

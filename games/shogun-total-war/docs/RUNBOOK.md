@@ -8,7 +8,7 @@ build time (checked 2026-11-18, see "Standalone check").
 
 | | |
 |---|---|
-| Shortcuts | `~/Desktop/Shogun-Total-War.desktop` (full screen), `Shogun-Total-War-FPS.desktop` (with FPS counter) |
+| Shortcuts | `Shogun-Total-War.desktop` (full screen), `Shogun-Total-War-FPS.desktop` (with FPS counter), in the app menu (`~/.local/share/applications`) and on the desktop if `~/Desktop` exists |
 | Command | `~/stw/scripts/pi/play.sh [--fps] [--window]` |
 | Logs | `~/stw/logs/play-*.log` |
 | Saves | `~/stw/game-lazy/savegames/*.cpg` |
@@ -21,7 +21,7 @@ harness's mode).
 
 ## Components and versions
 
-Everything lives in `~/stw` (`STW_HOME`). Built or fetched by `scripts/pi/setup-new-pi.sh`.
+Everything lives in `~/stw` (`STW_HOME`). Built or fetched by `scripts/pi/setup.sh`.
 
 | Component | Where | Version / source | Check |
 |---|---|---|---|
@@ -42,7 +42,7 @@ Exact SHA-256 of the built files are printed in the setup log (`~/stw/logs/setup
 
 ```sh
 tmux new -s stw
-~/stw/scripts/pi/setup-new-pi.sh --installer ~/stw/installer
+~/stw/scripts/pi/setup.sh --installer ~/stw/installer
 ```
 
 Each step leaves a marker in `~/stw/.setup/`; delete a marker (for example `mesa.done`) to redo
@@ -74,7 +74,7 @@ alone installed (apt history, 2026-11-18): `gcc-x86-64-linux-gnu` (+19 automatic
 WINEPREFIX=~/stw/prefixes/box64 ~/stw/box64/usr/local/bin/box64 ~/stw/wine-x64-9.17/bin/wineserver -k
 # 2. everything of this project
 rm -rf ~/stw
-rm -f ~/Desktop/Shogun-Total-War.desktop ~/Desktop/Shogun-Total-War-FPS.desktop
+rm -f ~/Desktop/Shogun-Total-War*.desktop ~/.local/share/applications/Shogun-Total-War*.desktop
 # 3. optional: build packages this project alone installed (check nothing else needs them)
 sudo apt-get remove gcc-x86-64-linux-gnu libc6-dev-amd64-cross libxi-dev libxinerama-dev \
   libxcursor-dev libxcomposite-dev cmake

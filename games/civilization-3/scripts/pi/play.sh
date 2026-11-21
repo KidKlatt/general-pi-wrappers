@@ -9,7 +9,7 @@
 # CIV3_MODE=WxH picks the mode yourself (it must be in `wlr-randr`'s list for the display).
 # Log: ~/civ3/logs/play-<time>.log
 set -u
-export CIV3_HOME="${CIV3_HOME:-$HOME/civ3}"
+export CIV3_HOME="${CIV3_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$CIV3_HOME" || exit 2
 export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}" XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 mkdir -p logs

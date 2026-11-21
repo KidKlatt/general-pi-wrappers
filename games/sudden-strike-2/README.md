@@ -32,7 +32,7 @@ yet**, so a new Pi needs the steps below by hand. Tested GOG build and file hash
 ## Manual setup outline
 
 1. Hangover 11.16 installed system-wide **including the `hangover-libwow64fex` package**.
-   Medieval: Total War's [setup-new-pi.sh](../medieval-total-war/scripts/pi/setup-new-pi.sh)
+   Medieval: Total War's [setup.sh](../medieval-total-war/scripts/pi/setup.sh)
    installs Hangover but not that FEX package (it ships in the same Hangover release tarball).
 2. Copy this folder to `~/ss2`, put the installer in `~/ss2/installer/`, extract it and apply
    the `winmm_override` files as in [docs/game-files-pi4.md](docs/game-files-pi4.md).

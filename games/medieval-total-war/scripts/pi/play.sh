@@ -11,7 +11,7 @@
 # This script needs no sudo. On a Pi that also runs heavy background jobs, see "Known limits"
 # in docs/NEW-PI-SETUP.md.
 set -u
-MTW_HOME="${MTW_HOME:-$HOME/mtw}"
+export MTW_HOME="${MTW_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$MTW_HOME" || exit 2
 PROFILE=config/profile-43-hangover-d3d9lazy-fullscreen.env
 FPS=0

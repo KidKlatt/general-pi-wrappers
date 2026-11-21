@@ -2,7 +2,7 @@
 Type=Application
 Name=Shogun Total War (FPS counter)
 Comment=Start the game full screen with a frame-rate counter
-Exec=/home/admin/stw/scripts/pi/play.sh --fps
-Icon=/home/admin/stw/config/desktop/shogun.png
+Exec=@GAME_HOME@/scripts/pi/play.sh --fps
+Icon=@GAME_HOME@/config/desktop/shogun.png
 Terminal=false
 Categories=Game;
