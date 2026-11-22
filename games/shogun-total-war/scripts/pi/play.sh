@@ -3,8 +3,8 @@
 # Wine 9.17 with the rebuilt winex11.so, game-lazy copy with the d3d9lazy shim and the
 # linear-resampler dsound.dll). Used by the desktop shortcuts in config/desktop.
 #   --fps      show Mesa's frame-rate counter in the top left corner
-#   --window   the game in an 800x600 Wine desktop window (profile-best, as the test harness runs)
-# Default is full screen (profile-final-pi4 = profile-10-fullscreen, experiment 58): no Wine desktop; this project's
+#   --window   the game in an 800x600 Wine desktop window (config/profile-window.env, as the test harness runs)
+# Default is full screen (config/profile-play.env, experiment 58): no Wine desktop; this project's
 # winex11.so turns the game's 800x600 / 640x480 modes into Xwayland emulated modes, and Xwayland
 # scales the game to the whole screen (stretched to 16:9). Nothing in the registry changes, and
 # the screen mode is untouched for every other program; it ends when the game exits.
@@ -13,11 +13,11 @@ set -u
 export STW_HOME="${STW_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$STW_HOME" || exit 2
 FPS=0
-PROFILE=config/profile-final-pi4.env
+PROFILE=config/profile-play.env
 for a in "$@"; do
   case "$a" in
     --fps) FPS=1 ;;
-    --window) PROFILE=config/profile-best.env ;;
+    --window) PROFILE=config/profile-window.env ;;
   esac
 done
 

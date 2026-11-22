@@ -198,6 +198,11 @@ if [ "$REPO" != "$STW" ]; then
     cp -r "$REPO/$d/." "$STW/$d/"
   done
   cp -f "$REPO/game.json" "$STW/game.json"
+  # Config files renamed in the wrapper (2026-11-21). Only in a plain game home: a development
+  # home (with config/profile-00-baseline.env) keeps them as experiment records.
+  if [ ! -f "$STW/config/profile-00-baseline.env" ]; then
+    for f in profile-final-pi4.env profile-best.env; do rm -f "$STW/config/$f"; done
+  fi
 fi
 sed -i 's/\r$//' "$STW"/scripts/pi/*.sh "$STW"/config/*.env "$STW"/tools/*/*.py "$STW"/tools/*/*.sh 2>/dev/null || true
 chmod +x "$STW"/scripts/pi/*.sh "$STW"/tools/*/*.sh

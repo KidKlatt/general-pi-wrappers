@@ -3,6 +3,20 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.3.1 — 2026-11-21
+
+No change to the tested setup (GOG offline installer build `86311`); not rerun on a Pi.
+
+- Config files renamed to the wrapper naming scheme (`pi4-<id>[-<variant>].env`,
+  `track-<stack>.env`, `profile-play.env` for the default, `profile-<option>.env` for a `play.sh`
+  option): `pi4-lazy.env` → `pi4-mtw-lazy.env`,
+  `profile-43-hangover-d3d9lazy-fullscreen.env` → `profile-play.env`,
+  `profile-42-hangover-d3d9lazy-vram512.env` → `profile-window.env` (`--window`). Contents
+  unchanged apart from the header comments.
+- `setup.sh` removes the old file names from an updated game home (not from a development home).
+- `game.json` target: `profile` now names the full-screen profile the desktop shortcuts run
+  (`profile-play.env`, checked on the development Pi), matching its "full screen" result.
+
 ## 1.3.0 — 2026-11-21
 
 No change to the tested setup. `setup.sh --check` passes against the existing

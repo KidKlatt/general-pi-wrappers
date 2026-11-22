@@ -28,8 +28,8 @@ Tested GOG build and file hash are in [game.json](game.json).
 | `config/desktop/*.desktop` | Desktop shortcuts (normal and with FPS counter); the icon is made from the game's own icon during setup |
 | `config/track-box64.env` | Box64 + Wine 9.17 paths, own prefix `~/stw/prefixes/box64`, own caches |
 | `config/pi4-stw-lazy.env` | Device settings for the game copy `~/stw/game-lazy` that holds the custom DLLs |
-| `config/profile-final-pi4.env` | The final profile: full screen, d3d9lazy and dsound overrides, patched Mesa paths |
-| `config/profile-best.env` | The same in an 800x600 Wine desktop window (`play.sh --window`) |
+| `config/profile-play.env` | The final profile: full screen, d3d9lazy and dsound overrides, patched Mesa paths |
+| `config/profile-window.env` | The same in an 800x600 Wine desktop window (`play.sh --window`) |
 | `tools/d3d9lazy/d3d9lazy.c` | Own Direct3D 9 shim (Medieval's v10 plus a per-frame draw gate), built with MinGW as `d3d9.dll` |
 | `tools/dsound/` | Patch for Wine 9.17's DirectSound with a linear resampler (fixed the battle slowdowns) |
 | `tools/winex11/` | Two changes to Wine 9.17's `winex11.so`: removes a deadlock at campaign start, and sets Xwayland emulated modes so the game fills the screen |

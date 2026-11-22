@@ -3,6 +3,18 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.3.1 — 2026-11-21
+
+No change to the tested setup (GOG offline installer build `86790`); not rerun on a Pi.
+
+- Config files renamed to the wrapper naming scheme (`pi4-<id>[-<variant>].env`,
+  `track-<stack>.env`, `profile-play.env` for the default, `profile-<option>.env` for a `play.sh`
+  option): `profile-final-pi4.env` → `profile-play.env`, `profile-best.env` →
+  `profile-window.env` (`--window`). `pi4-stw-lazy.env` keeps its name (a development home also
+  has its own `pi4-stw.env` for the clean game copy). Contents unchanged apart from the header
+  comments; the docs no longer name experiment profiles that are not shipped.
+- `setup.sh` removes the old file names from an updated game home (not from a development home).
+
 ## 1.3.0 — 2026-11-21
 
 No change to the tested setup. `setup.sh --check` passes against the existing

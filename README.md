@@ -11,8 +11,8 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 
 | Folder | Game | GOG product id(s) | Wrapper | Status |
 |---|---|---|---|---|
-| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.3.0 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
-| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.3.0 | playable, Phase 5 (standalone, full screen) |
+| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.3.1 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
+| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.3.1 | playable, Phase 5 (standalone, full screen) |
 | [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.3.0 | playable, Phase 4/5 (widescreen 1280x720) |
 | [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.3.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
 | [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.12.0 | playable (setup.sh, widescreen) |
@@ -43,6 +43,24 @@ Each game folder is self-contained: copy it to a Pi and its scripts work from th
 by two games (for example the d3d9lazy shim used by Medieval and Shogun) is still copied into
 each game, because each game carries its own variant; promote it to a shared folder only once
 two games use the identical file.
+
+### Config file names
+
+`play.sh` loads three env files from `config/`, in this order. Their names follow one pattern, so
+people and general-pi-manager can tell what each one is from its name:
+
+| File | What it holds |
+|---|---|
+| `pi4-<short_id>.env` | Device and game settings (`GAME_DIR`, `GAME_EXE`, resolution). If the shipped setup runs a different game copy than the workshop's clean one, add a variant: `pi4-<short_id>-<variant>.env` (e.g. `pi4-mtw-lazy.env`), so it never overwrites the development home's own device file |
+| `track-<stack>.env` | The emulation stack: `track-hangover.env`, `track-box64.env` |
+| `profile-play.env` | The knobs the default `play.sh` (and the main shortcut) runs with |
+| `profile-<option>.env` | The knobs for a `play.sh` option, named after it: `--window` loads `profile-window.env` |
+
+A game that needs no extra knobs may ship no profile. Numbered experiment profiles
+(`profile-42-…`) belong only in the workshop record; a shipped profile's header comment says
+which experiment it came from. When a file is renamed, `setup.sh` removes the old name from an
+updated game home (but never from a development home, recognised by
+`config/profile-00-baseline.env`).
 
 ## Setup interface
 

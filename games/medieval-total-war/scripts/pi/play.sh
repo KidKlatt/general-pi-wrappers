@@ -3,8 +3,8 @@
 # the d3d9lazy shim). Used by the desktop shortcuts.
 #   --fps      show Mesa's frame-rate counter in the top left corner
 #   --window   the old way: unscaled game in the corner of a 1024x768 Wine desktop window
-#              (profile 42, the configuration the tests were validated with)
-# Default is full screen (profile 43: no Wine virtual desktop). Wine then scales the game's
+#              (config/profile-window.env, the configuration the tests were validated with)
+# Default is full screen (config/profile-play.env: no Wine virtual desktop). Wine then scales the game's
 # picture to the display, keeping its shape; this needs the prefix setting
 # HKCU\Software\Wine\X11 Driver\EmulateModeset=Y (set 2026-11-15, experiment 133).
 # The battle resolution is chosen in the game: Options > Video.
@@ -13,17 +13,17 @@
 set -u
 export MTW_HOME="${MTW_HOME:-$(cd "$(dirname "$0")/../.." && pwd)}"   # the game home this script is in
 cd "$MTW_HOME" || exit 2
-PROFILE=config/profile-43-hangover-d3d9lazy-fullscreen.env
+PROFILE=config/profile-play.env
 FPS=0
 for a in "$@"; do
   case "$a" in
     --fps) FPS=1 ;;
-    --window) PROFILE=config/profile-42-hangover-d3d9lazy-vram512.env ;;
+    --window) PROFILE=config/profile-window.env ;;
   esac
 done
 
 set -a
-. config/pi4-lazy.env
+. config/pi4-mtw-lazy.env
 . config/track-hangover.env
 . "$PROFILE"
 set +a
