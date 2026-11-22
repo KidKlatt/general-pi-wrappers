@@ -42,6 +42,6 @@ cp dsound-native.dll ~/stw/game-lazy/dsound.dll
 Check that it is the one in use: the game log shows `STW dsound build: linear resampler`, and
 `grep dsound /proc/$(pgrep -x ShogunM.exe)/maps` names `game-lazy/dsound.dll`.
 
-Loaded with `dsound=n,b` (`config/profile-08-dsound-linear.env`). Only for Wine 9.17 (Track B);
+Loaded with `dsound=n,b` (`config/profile-play.env` and `config/profile-window.env`). Only for Wine 9.17 (Track B);
 the system Hangover Wine is not touched. Wine is LGPL 2.1+: the patch and this note are the
 source for the change.

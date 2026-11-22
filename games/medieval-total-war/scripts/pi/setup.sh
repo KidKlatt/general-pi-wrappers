@@ -225,6 +225,11 @@ if [ "$REPO" != "$MTW" ]; then
     cp -r "$REPO/$d/." "$MTW/$d/"
   done
   cp -f "$REPO/game.json" "$MTW/game.json"
+  # Config files renamed in the wrapper (2026-11-21). Only in a plain game home: a development
+  # home (with config/profile-00-baseline.env) keeps them as experiment records.
+  if [ ! -f "$MTW/config/profile-00-baseline.env" ]; then
+    for f in pi4-lazy.env profile-42-hangover-d3d9lazy-vram512.env profile-43-hangover-d3d9lazy-fullscreen.env; do rm -f "$MTW/config/$f"; done
+  fi
   chmod +x "$MTW"/scripts/pi/*.sh
 fi
 echo "OK"
@@ -322,7 +327,7 @@ else echo "already done"; fi
 # ---------------------------------------------------------------------------------------------
 step "Creating the Wine prefix (a few minutes; Mono/RPC messages are normal)"
 set -a
-. "$MTW/config/pi4-lazy.env"
+. "$MTW/config/pi4-mtw-lazy.env"
 . "$MTW/config/track-hangover.env"
 set +a
 export DISPLAY="${DISPLAY:-:0}" XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"

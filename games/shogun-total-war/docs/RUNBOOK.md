@@ -34,7 +34,7 @@ Everything lives in `~/stw` (`STW_HOME`). Built or fetched by `scripts/pi/setup.
 | Patched Mesa | `~/stw/mesa-patched` | Mesa 26.2.6 (`archive.mesa3d.org`, SHA-256 `b9436b3e1a8be76fbd4823dc884f90596ab7c6ac5e1867a305e66ffccfb31a92`) + `patches/mesa-v3d-busy-range.patch`; only the game uses it (env vars in the profile), the system Mesa is untouched | `grep libgallium /proc/$(pgrep -x ShogunM.exe)/maps` |
 | Game | `~/stw/game-lazy` | GOG `setup_shogun_total_wartm_gog_v1_(86790).exe`, SHA-256 `bed36e39c45bc447f21a25c7de5f3f09a09587ac176129cd3621fe9c5f216b28`, unpacked with `innoextract --gog --language=en-US` | `ShogunM.exe` |
 | Wine prefix | `~/stw/prefixes/box64` | `wineboot -u`; no registry changes | |
-| Settings | `config/pi4-stw-lazy.env` + `config/track-box64.env` + `config/profile-final-pi4.env` | | |
+| Settings | `config/pi4-stw-lazy.env` + `config/track-box64.env` + `config/profile-play.env` | | |
 
 Exact SHA-256 of the built files are printed in the setup log (`~/stw/logs/setup-*.log`).
 

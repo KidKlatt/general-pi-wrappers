@@ -58,5 +58,5 @@ called by full path, with its own prefix.
 `getconf PAGESIZE` must print 4096. Pi 5 kernels default to 16 KB pages: add `kernel=kernel8.img`
 to `/boot/firmware/config.txt` and reboot, then run the setup. The patched Mesa targets the
 Pi 4's V3D 4.2; on a Pi 5 try without it first (remove the four Mesa lines from
-`config/profile-final-pi4.env`). Box64 is built with `-DRPI4ARM64=1`; for a Pi 5 use
+`config/profile-play.env`). Box64 is built with `-DRPI4ARM64=1`; for a Pi 5 use
 `-DRPI5ARM64=1` (edit step 4 of the script).

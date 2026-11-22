@@ -68,7 +68,7 @@ of exactly that size at 0,0 to the whole output (wp_viewporter, which labwc offe
 the thread's connection: the game window belongs to it, and Wine's shared `gdi_display` is a
 different X client (the first try, which scaled nothing). Xwayland scales the pointer back. Other
 programs and the real screen mode are untouched; the emulation ends with the game. The picture is
-stretched from 4:3 to 16:9. Run without a Wine desktop (`config/profile-10-fullscreen.env`); the
+stretched from 4:3 to 16:9. Run without a Wine desktop (`config/profile-play.env`); the
 Wine-desktop mode the harness uses does not go through this code. The log prints `STW winex11
 build: Xwayland mode changes by emulation` at the first mode change.
 
