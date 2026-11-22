@@ -41,8 +41,10 @@ are stored here.
 
 ## License
 
-The scripts, configuration, docs, shim source and patch scripts here are MIT
-([LICENSE](../../LICENSE)). The patches under `tools/dsound/` and `tools/winex11/` modify Wine and
-fall under Wine's LGPL 2.1+; the Mesa patch under `patches/` under Mesa's license (mainly MIT). Box64 (MIT), Wine (LGPL 2.1+) and Mesa (mainly MIT) keep their own
-licenses and are downloaded, not stored here. Shogun: Total War is a commercial game and is not
-included.
+The scripts, configuration, docs and shim source here are MIT ([LICENSE](../../LICENSE)). The
+patches and the `apply-*.py` scripts under `tools/dsound/` and `tools/winex11/` modify Wine and
+carry excerpts of its source, so they fall under Wine's LGPL 2.1+; the Mesa patch under
+`patches/` under Mesa's license (mainly MIT). Box64 (MIT), Wine (LGPL 2.1+) and Mesa (mainly MIT)
+keep their own licenses and are downloaded, not stored here. Shogun: Total War is a commercial
+game and is not included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for every
+component, what is built on the Pi, and what goes into the game folder.

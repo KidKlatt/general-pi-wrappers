@@ -42,6 +42,8 @@ def problems(game: dict, folder: str) -> list[str]:
                 out.append(f"bad sha256 for {f.get('name')}")
     out += interface_problems(game.get("entry_points", {}), ROOT / "games" / folder)
     out += info_problems(game)
+    if not (ROOT / "games" / folder / "THIRD-PARTY-NOTICES.md").is_file():
+        out.append("THIRD-PARTY-NOTICES.md is missing (README, \"Third-party notices\")")
     return out
 
 

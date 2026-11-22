@@ -31,6 +31,7 @@ games/<slug>/
   game.json                  GOG product ids, installer builds + SHA-256, wrapper version, stack, dependencies
   CHANGELOG.md               wrapper versions, each tied to the GOG build it was tested on
   README.md                  what it does, status, how to set it up
+  THIRD-PARTY-NOTICES.md     what the setup downloads, builds and changes, and under which licenses
   config/ scripts/pi/        what the Pi needs to install and run it
   tools/ patches/            own shims and patches against Wine / Mesa (source only; built on the Pi)
   docs/                      setup guides
@@ -170,11 +171,28 @@ each `game.json`; never edit it by hand.
 branch `game/<slug>` and merged back when it is ready; see the workshop's
 [WORKFLOW.md](https://github.com/KidKlatt/General_Pi_Workshop/blob/main/WORKFLOW.md).
 
+## Third-party notices
+
+Every game folder has a `THIRD-PARTY-NOTICES.md` (`build-catalog.py --check` fails without one).
+It lists, for that game:
+
+- what the setup downloads or installs (source, pinned version, license),
+- files in the folder that are not covered by the MIT license (patches against Wine or Mesa, and
+  scripts that carry excerpts of their source),
+- what is built on the Pi from those sources,
+- tools the user has to get themselves, which are never shipped or downloaded (such as Sudden
+  Strike 2's widescreen patcher),
+- every change the setup makes to the unpacked game folder,
+- the game, its owners, and that it is not included.
+
+Update it in the same change whenever a download, a build step, a patch or a change to the game
+folder is added or removed.
+
 ## License
 
-This repository's own files (scripts, configuration, docs, shim source, patch scripts) are under
-the [MIT license](LICENSE). Patches against Wine and Mesa fall under those projects' licenses
-(LGPL 2.1+ and mainly MIT). Emulators, Wine, Mesa and helper tools are downloaded from their
-official releases during setup, not stored here. See each game's README and
-[games/medieval-total-war/THIRD-PARTY-NOTICES.md](games/medieval-total-war/THIRD-PARTY-NOTICES.md).
-The games are commercial and not included.
+This repository's own files (scripts, configuration, docs, shim source) are under the
+[MIT license](LICENSE). Patches against Wine and Mesa, and the scripts that apply them with
+excerpts of the Wine source, fall under those projects' licenses (LGPL 2.1+ and mainly MIT).
+Emulators, Wine, Mesa and helper tools are downloaded from their official releases during setup,
+not stored here. Each game's `THIRD-PARTY-NOTICES.md` has the details. The games are commercial
+and not included.

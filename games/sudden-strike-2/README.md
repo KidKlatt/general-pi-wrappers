@@ -66,4 +66,6 @@ Without it the game runs at 800x600 stretched to the screen.
 
 The scripts, configuration and docs here are MIT ([LICENSE](../../LICENSE)). cnc-ddraw (MIT),
 Hangover/Wine (LGPL 2.1+) and FEX (MIT) keep their own licenses and are downloaded, not stored
-here. Sudden Strike 2 is a commercial game and is not included.
+here. The optional widescreen patcher is closed source and not included. Sudden Strike 2 is a
+commercial game and is not included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for
+what the setup installs and which game files it replaces.

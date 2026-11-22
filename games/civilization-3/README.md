@@ -83,6 +83,8 @@ The full record (97 experiments) is in
 
 ## License
 
-The scripts, configuration and docs here are MIT ([LICENSE](../../LICENSE)). Hangover/Wine
-(LGPL 2.1+) and Box64 (MIT) keep their own licenses and are installed from their official
-release, not stored here. Civilization III is a commercial game and is not included.
+The scripts, configuration and docs here are MIT ([LICENSE](../../LICENSE)). Hangover and its
+Wine (LGPL 2.1+) with the WowBox64 back-end (from Box64, MIT) keep their own licenses and are
+installed from their official release, not stored here. Civilization III is a commercial game
+and is not included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for what the setup
+installs and what it changes in the game folder.
