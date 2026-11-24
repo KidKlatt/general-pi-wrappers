@@ -11,11 +11,11 @@ repository [General_Pi_Workshop](https://github.com/KidKlatt/General_Pi_Workshop
 
 | Folder | Game | GOG product id(s) | Wrapper | Status |
 |---|---|---|---|---|
-| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.3.1 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
-| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.3.1 | playable, Phase 5 (standalone, full screen) |
-| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.3.0 | playable, Phase 4/5 (widescreen 1280x720) |
-| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.3.0 | playable, Phase 4/5 (split from Sudden Strike 2) |
-| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.12.0 | playable (setup.sh, widescreen) |
+| [games/medieval-total-war](games/medieval-total-war/) | Medieval: Total War | `1397939414` | 1.3.2 | released ([TWM_Pi](https://github.com/KidKlatt/TWM_Pi)) |
+| [games/shogun-total-war](games/shogun-total-war/) | Shogun: Total War – Warlord Edition | `1874325037` | 1.3.2 | playable, Phase 5 (standalone, full screen) |
+| [games/sudden-strike-2](games/sudden-strike-2/) | Sudden Strike 2 | `1443986935` | 1.3.1 | playable, Phase 4/5 (widescreen 1280x720) |
+| [games/sudden-strike-resource-war](games/sudden-strike-resource-war/) | Sudden Strike: Resource War | `1707288232` | 1.3.1 | playable, Phase 4/5 (split from Sudden Strike 2) |
+| [games/civilization-3](games/civilization-3/) | Sid Meier's Civilization III Complete | `1471405734` | 0.12.1 | playable (setup.sh, widescreen) |
 
 The machine-readable version of this table is [catalog.json](catalog.json), generated from each
 game's `game.json` by `python tools/build-catalog.py` (run `--check` before merging).
@@ -82,7 +82,7 @@ follow it.
 | `-h`, `--help` | Usage. |
 
 A game may add its own options; it lists them in `entry_points.setup_options` (for example
-Medieval's `--private-wine`).
+Medieval's `--private-wine`), in the form described under "Options" below.
 
 - **Exit codes:** 0 done; 1 failed (run the same command again: finished steps are skipped);
   2 usage error; 3 needs you: something only the user can fix (reboot for 4 KB pages, free disk,
@@ -114,8 +114,36 @@ from its own location (or `<ID>_HOME`), so a game set up with `--home` starts fr
 | `--fps` | Frame-rate counter (where the game supports it). |
 | `--window` | In a window instead of full screen (where the game supports it). |
 
-Other options are listed in `entry_points.play_options`. Exit codes: 0 played; 1 this game is
+Every option `play.sh` takes is listed in `entry_points.play_options` (see "Options"); the
+manager shows them behind the gear next to Play. Exit codes: 0 played; 1 this game is
 already running (it never refuses because a different game runs); 2 not set up, or usage error.
+
+**Options.** `setup_options` and `play_options` are lists of two kinds of entry, which a tool
+shows as controls and turns into command-line arguments. No options selected means the plain
+command, which is what the shortcuts run.
+
+```json
+"play_options": [
+  { "option": "--fps", "label": "FPS counter", "help": "Mesa's frame-rate counter" },
+  { "type": "choice", "id": "display", "label": "Display", "default": "full",
+    "choices": [
+      { "value": "full",   "label": "Full screen",     "args": [] },
+      { "value": "window", "label": "Window 1024x768", "args": ["--window"] }
+    ] }
+]
+```
+
+| Kind | Shown as | Fields |
+|---|---|---|
+| flag (`type` absent or `"flag"`) | checkbox; ticked adds `option` | `option` (`--name`), `help`, optional `label` (short checkbox text; `help` when absent) |
+| choice (`"type": "choice"`) | drop-down; the selected entry adds its `args` | `id` (names the remembered setting), `label`, optional `help`, `default` (a `value`), `choices[]` with `value`, `label`, `args` (`--name` or `--name=value`; `[]` for the plain command) |
+
+Options that exclude each other (`--window`, `--fit`) are one choice, never separate flags.
+`build-catalog.py --check` checks the fields, that `default` is one of the values, and that every
+`--name` appears in the script that takes it. A tool remembers the user's choices per game and
+reads the options from the `game.json` in the game home, so they always match the installed
+`play.sh`. A choice whose effect needs a setup step (for example a resolution patch applied to
+the game files) is a setup option, not a play option.
 
 **`scripts/pi/uninstall.sh`** removes the game: its game home (the game with its saves and
 settings, the Wine prefix, everything the setup built there) and the shortcuts the setup

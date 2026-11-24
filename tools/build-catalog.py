@@ -17,7 +17,7 @@ STATUSES = {"planned", "in-progress", "playable", "released", "retired"}
 STANDARD_SETUP_OPTIONS = ("--installer", "--home", "--allow-upgrades", "--no-desktop", "--jobs", "--check")
 RATINGS = {None, "smooth", "playable", "rough", "broken"}
 CATALOG_VERSION = 2
-MIN_MANAGER_VERSION = "0.1.0"   # raise when the catalog changes in a way older managers cannot read
+MIN_MANAGER_VERSION = "0.2.0"   # raise when the catalog changes in a way older managers cannot read
 
 
 def problems(game: dict, folder: str) -> list[str]:
@@ -71,13 +71,65 @@ def info_problems(game: dict) -> list[str]:
     return out
 
 
+ARG = r"--[a-z0-9-]+(=[A-Za-z0-9._:+-]+)?"
+NAME = r"[a-z0-9]+(-[a-z0-9]+)*"
+
+
+def option_problems(opts, where: str, script: str | None) -> list[str]:
+    """README "Options": flags (checkboxes) and choices (drop-downs). Every --name must appear
+    in the script that takes it, so an option cannot be announced that the script rejects."""
+    if not isinstance(opts, list):
+        return [f"{where} must be a list"]
+    out, keys, args = [], set(), []
+    for o in opts:
+        if not isinstance(o, dict):
+            out.append(f"{where}: each entry must be an object")
+            continue
+        kind = o.get("type", "flag")
+        if kind == "flag":
+            if not (re.fullmatch(r"--[a-z0-9-]+", str(o.get("option", ""))) and o.get("help")):
+                out.append(f"{where}: a flag needs option (--name) and help")
+                continue
+            key = o["option"]
+            args.append(key)
+        elif kind == "choice":
+            key = str(o.get("id", ""))
+            choices = o.get("choices")
+            if not (re.fullmatch(NAME, key) and o.get("label") and isinstance(choices, list) and len(choices) >= 2):
+                out.append(f"{where}: a choice needs id, label and at least two choices")
+                continue
+            values = []
+            for c in choices:
+                if not (isinstance(c, dict) and re.fullmatch(NAME, str(c.get("value", ""))) and c.get("label")
+                        and isinstance(c.get("args"), list) and all(re.fullmatch(ARG, str(a)) for a in c["args"])):
+                    out.append(f"{where}.{key}: each choice needs value, label and args (--name or --name=value)")
+                    continue
+                values.append(c["value"])
+                args += c["args"]
+            if len(set(values)) != len(values):
+                out.append(f"{where}.{key}: choice values must differ")
+            if o.get("default") not in values:
+                out.append(f"{where}.{key}: default must be one of the choice values")
+        else:
+            out.append(f"{where}: type must be flag or choice, not {kind}")
+            continue
+        if key in keys:
+            out.append(f"{where}: {key} listed twice")
+        keys.add(key)
+    if script is not None:
+        for a in sorted({a.split("=")[0] for a in args}):
+            if a not in script:
+                out.append(f"{where}: {a} is not in the script")
+    return out
+
+
 def interface_problems(ep: dict, folder: Path) -> list[str]:
     """The standard setup interface (README, "Setup interface"), version 1."""
     out = []
     for key in ("setup_options", "play_options"):
-        for o in ep.get(key, []):
-            if not (isinstance(o, dict) and re.fullmatch(r"--[a-z0-9-]+", str(o.get("option", ""))) and o.get("help")):
-                out.append(f"entry_points.{key}: each entry needs option (--name) and help")
+        script = folder / ("scripts/pi/setup.sh" if key == "setup_options" else "scripts/pi/play.sh")
+        out += option_problems(ep.get(key, []), f"entry_points.{key}",
+                               script.read_text(encoding="utf-8") if script.is_file() else None)
     if ep.get("setup_interface") is None:
         return out
     if ep.get("setup_interface") != 1:

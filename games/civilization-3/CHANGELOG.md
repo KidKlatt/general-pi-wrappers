@@ -3,6 +3,12 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 0.12.1 — 2026-11-24
+
+No change to the tested setup (GOG offline installer `setup_civilization3_complete_2.0.0.7.exe`); `play.sh` is unchanged.
+
+- `game.json` `play_options`: `--x11` gets a short label for the manager's checkbox.
+
 ## 0.12.0 — 2026-11-21
 
 No change to the tested setup. `setup.sh --check` passes against the existing
