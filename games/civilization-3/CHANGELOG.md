@@ -3,6 +3,19 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 0.12.2 — 2026-11-24
+
+Fixes found on a fresh Pi 5 (GOG offline installer `setup_civilization3_complete_2.0.0.7.exe`).
+
+- `with-mode.sh` reads the current display mode when wlr-randr marks it
+  "(preferred, current)", not only "(current)". On a screen whose current mode is also its
+  preferred one, Play stopped with "cannot read the current mode" before the game started.
+
+- `setup.sh` installs `hangover-libarm64ecfex` together with `hangover-wine` and
+  `hangover-wowbox64`: `hangover-wine` 11.16 depends on it, so on a Pi without Hangover the apt
+  simulation failed ("unmet dependencies"). Found on a fresh Pi 5; the development Pi 4 already
+  had it installed.
+
 ## 0.12.1 — 2026-11-24
 
 No change to the tested setup (GOG offline installer `setup_civilization3_complete_2.0.0.7.exe`); `play.sh` is unchanged.

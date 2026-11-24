@@ -12,7 +12,8 @@ export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 OUT=${CIV3_OUTPUT:-$(wlr-randr | awk '/^[^ ]/{o=$1} /Enabled: yes/{print o; exit}')}
 [ -n "$OUT" ] || { echo "with-mode: no enabled output found"; exit 2; }
-OLD=$(wlr-randr | awk -v o="$OUT" '$1==o{f=1;next} /^[^ ]/{f=0} f&&/\(current\)/{print $1; exit}')
+# wlr-randr marks the mode "(current)" or, when it is also the preferred one, "(preferred, current)"
+OLD=$(wlr-randr | awk -v o="$OUT" '$1==o{f=1;next} /^[^ ]/{f=0} f&&/[(, ]current\)/{print $1; exit}')
 [ -n "$OLD" ] || { echo "with-mode: cannot read the current mode of $OUT"; exit 2; }
 restore() {
   wlr-randr --output "$OUT" --mode "$OLD" && echo "with-mode: $OUT restored to $OLD"

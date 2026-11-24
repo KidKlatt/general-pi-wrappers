@@ -156,7 +156,8 @@ if ! done_ packages; then
     echo "$HANGOVER_SHA  $HANGOVER_TAR" | sha256sum -c - || die "Hangover download checksum mismatch; delete $CIV3_HOME/downloads/$HANGOVER_TAR and retry."
     mkdir -p "hangover-$HANGOVER_VER" && tar -xf "$HANGOVER_TAR" -C "hangover-$HANGOVER_VER"
     H="$CIV3_HOME/downloads/hangover-$HANGOVER_VER"
-    apt_install "$H"/hangover-wine_*_arm64.deb "$H"/hangover-wowbox64_*_arm64.deb
+    # hangover-wine depends on hangover-libarm64ecfex (or fex-emu-wine), which is in the same release
+    apt_install "$H"/hangover-wine_*_arm64.deb "$H"/hangover-libarm64ecfex_*_arm64.deb "$H"/hangover-wowbox64_*_arm64.deb
   fi
   mark packages
 fi
