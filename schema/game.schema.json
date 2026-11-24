@@ -8,12 +8,44 @@
   "$defs": {
     "options": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["option", "help"],
-        "properties": {
-          "option": { "type": "string", "pattern": "^--[a-z0-9-]+$" },
-          "help": { "type": "string" }
+      "description": "README, \"Options\": checkboxes (flag) and drop-downs (choice) a tool such as general-pi-manager shows.",
+      "items": { "oneOf": [ { "$ref": "#/$defs/flag" }, { "$ref": "#/$defs/choice" } ] }
+    },
+    "arg": { "type": "string", "pattern": "^--[a-z0-9-]+(=[A-Za-z0-9._:+-]+)?$" },
+    "flag": {
+      "type": "object",
+      "required": ["option", "help"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "flag", "description": "Default when absent." },
+        "option": { "type": "string", "pattern": "^--[a-z0-9-]+$", "description": "Added to the command line when ticked." },
+        "label": { "type": "string", "description": "Checkbox text (short, e.g. \"FPS counter\"); help is used when absent." },
+        "help": { "type": "string" }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "required": ["type", "id", "label", "default", "choices"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "choice" },
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Names the setting a tool remembers." },
+        "label": { "type": "string" },
+        "help": { "type": "string" },
+        "default": { "type": "string", "description": "The value of the choice used without options; its args are usually []." },
+        "choices": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["value", "label", "args"],
+            "additionalProperties": false,
+            "properties": {
+              "value": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+              "label": { "type": "string" },
+              "args": { "type": "array", "items": { "$ref": "#/$defs/arg" }, "description": "Added to the command line, in this order." }
+            }
+          }
         }
       }
     }
@@ -126,9 +158,9 @@
       "properties": {
         "setup": { "type": ["string", "null"], "description": "scripts/pi/setup.sh when setup_interface is set" },
         "setup_interface": { "type": "integer", "enum": [1], "description": "The setup follows the standard interface (README, \"Setup interface\"), version 1. Absent: it does not (yet)." },
-        "setup_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard ones." },
+        "setup_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard ones, shown in the install and update flow." },
         "play": { "type": ["string", "null"] },
-        "play_options": { "$ref": "#/$defs/options", "description": "Options beyond the standard --fps and --window." },
+        "play_options": { "$ref": "#/$defs/options", "description": "Every option play.sh takes, as the controls a tool shows next to Play." },
         "uninstall": { "type": ["string", "null"], "enum": ["scripts/pi/uninstall.sh", null], "description": "README, \"Setup interface\"; absent: no uninstaller, remove by hand" },
         "desktop": { "type": "array", "items": { "type": "string" }, "description": "Shortcut templates; Exec/Icon paths use @GAME_HOME@." }
       }

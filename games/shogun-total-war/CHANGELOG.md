@@ -3,6 +3,14 @@
 Versions are the wrapper's own (`game.json` → `wrapper.version`). Each entry names the GOG
 build it was tested against.
 
+## 1.3.2 — 2026-11-24
+
+No change to the tested setup (GOG offline installer build `86790`); `play.sh` is unchanged.
+
+- `game.json` `play_options` in the new form (wrappers README, "Options"): an FPS counter checkbox
+  and a Display drop-down (full screen, window). general-pi-manager shows them behind the gear
+  next to Play.
+
 ## 1.3.1 — 2026-11-21
 
 No change to the tested setup (GOG offline installer build `86790`); not rerun on a Pi.

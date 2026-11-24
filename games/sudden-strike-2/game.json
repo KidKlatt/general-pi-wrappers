@@ -4,7 +4,7 @@
   "short_id": "ss2",
   "title": "Sudden Strike 2",
   "wrapper": {
-    "version": "1.3.0",
+    "version": "1.3.1",
     "status": "playable",
     "phase": "4/5 boundary (human play test passed; Gate 3 menu approval pending)",
     "updated": "2026-11-21",
@@ -105,15 +105,36 @@
     "play_options": [
       {
         "option": "--fps",
-        "help": "frame-rate counter"
+        "label": "FPS counter",
+        "help": "Mesa's frame-rate counter in the top left corner"
       },
       {
-        "option": "--window",
-        "help": "Wine desktop window of the game's size"
-      },
-      {
-        "option": "--fit",
-        "help": "full screen keeping the game's 4:3 shape (side bars on 16:9)"
+        "type": "choice",
+        "id": "display",
+        "label": "Display",
+        "help": "How the game shows on the screen",
+        "default": "full",
+        "choices": [
+          {
+            "value": "full",
+            "label": "Stretched full screen",
+            "args": []
+          },
+          {
+            "value": "fit",
+            "label": "4:3 full screen (side bars)",
+            "args": [
+              "--fit"
+            ]
+          },
+          {
+            "value": "window",
+            "label": "Window (game size)",
+            "args": [
+              "--window"
+            ]
+          }
+        ]
       }
     ],
     "uninstall": "scripts/pi/uninstall.sh"
